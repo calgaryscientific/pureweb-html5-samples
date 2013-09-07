@@ -1,0 +1,270 @@
+//
+// Copyright (c) 2013 Calgary Scientific Inc., all rights reserved.
+//
+//START OF PRODUCTION REPLACE
+goog.require('pureweb');
+goog.require('pureweb.client.Framework');
+goog.require('pureweb.client.WebClient');
+goog.require('pureweb.client.View');
+goog.require("pureweb.client.EncoderFormat");
+goog.require("pureweb.client.EncoderConfiguration");
+goog.require('pureweb.IllegalArgumentException');
+//END OF PRODUCTION REPLACE
+//Stores the collaboration URL when playing with another person
+var shareUrl = null;
+
+//keep track of last session state to report connection problems in onSessionStateChanged
+var lastSessionState = null;
+
+var asteroidsView = null;
+
+//Connect to the Asteroids service application, setup event listeners, application
+//state changed handlers. and register a callback for window.onbeforeunload to
+//disconnect from the service application before the page is unloaded.
+function startAsteroids() {
+    var uri = location.href;
+
+    //if the Asteroids client was downloaded using an app URI then at this point location.href
+    //will be the session URI to connect with. Otherwise Scribble was downloaded using a view
+    //URI, so construct the app URI (without the client) to connect with.
+    if (!pureweb.getClient().isaSessionUri(uri)) {
+        uri = location.protocol + '//' + location.host + '/pureweb/app?name=' + pureweb.getServiceAppName(uri);
+    }
+
+    //Create the view object for when we're ready to connect
+    asteroidsView = new pureweb.client.View({id: 'AsteroidsView', viewName: 'AsteroidsView'});
+
+    //Set up the EncoderConfiguration
+    //- only need to do this if you want to override the default configuration
+    var params = {};
+
+    //Special case for HTML - if the browser doesn't support binary responses
+    //We need to ask for the response as Base64 character encoded
+    if (!pureweb.getClient().supportsBinary()) {
+        params = {'UseBase64': true};
+    }
+
+    //Set to low quality JPEG for performance over quality
+    var encoderFormat = new pureweb.client.EncoderFormat('image/jpeg', 30, params);
+    var encoderConfig = new pureweb.client.EncoderConfiguration(encoderFormat, encoderFormat);
+
+    //You should set the configuration before connecting so that the service knows what format to serve up the view
+    asteroidsView.setEncoderConfiguration(encoderConfig);
+
+    var client = pureweb.getClient();
+
+    // if  a mobile client, then show the image-based controls
+
+    if (client.isMobile()) {
+        document.getElementById('leftButton').style.visibility='visible';
+        document.getElementById('rightButton').style.visibility='visible';
+        document.getElementById('forwardButton').style.visibility='visible';
+        document.getElementById('reverseButton').style.visibility='visible';
+        document.getElementById('fireButton').style.visibility='visible';
+        document.getElementById('shieldsButton').style.visibility='visible';
+    }
+
+    //register event listener for connected changed to create the Asteroids View
+    pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
+
+    //setup the window.onbeforeunload callback to disconnect from the service application
+    window.onbeforeunload = window.onunload = function(e) {
+        if (client.isConnected()) {
+            client.disconnect(false);
+        }
+    };
+
+    //add an app state value changed handler to change the background image each time play
+    //progresses a level.
+    pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
+
+    //now connect
+    pureweb.connect(uri);
+}
+
+//Connected changed event handler - creates the AsteroidsView View instance and completes initialization.
+function onConnectedChanged(e) {
+    if (e.target.isConnected()) {
+        //register event listeners for connection stalled and session state failed events
+        var client = pureweb.getClient();
+        pureweb.listen(client, pureweb.client.WebClient.EventType.STALLED_CHANGED, onStalledChanged);
+        pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);
+
+        //Initialize Diagnostics panel if there is one
+        var diagnosticsPanel = document.getElementById('pwDiagnosticsPanel');
+        if (diagnosticsPanel) {
+            pureweb.client.diagnostics.initialize();
+        }
+
+        setupFPSCounter(asteroidsView);
+    }
+}
+
+//Stalled state changed event handler - logs a message indicating if the connection to the service
+//application has entered the stalled state, or whether it has recovered.
+function onStalledChanged(event) {
+    if (pureweb.getClient().isStalled()) {
+        pureweb.getClient().logger.fine('Connection to the Asteroids service application has stalled and may have been lost.');
+    } else {
+        pureweb.getClient().logger.fine('Connection to the Asteroids service application has recovered.');
+    }
+}
+
+//Session state changed event handler - checks for the failed state.
+function onSessionStateChanged(event) {
+    var sessionState = pureweb.getClient().getSessionState();
+    if (sessionState === pureweb.client.SessionState.FAILED) {
+        if (lastSessionState === pureweb.client.SessionState.CONNECTING) {
+            alert('Unable to connect to the Asteroids service application.');
+        } else {
+            alert('Connection to the Asteroids service application has been lost. Refresh the page to restart.');
+        }
+    }
+    lastSessionState = sessionState;
+}
+
+//Clicking the start button will prompt you for your name and set it via a PureWeb command
+function getName() {
+    var name = window.prompt("What is your name?","Anonymous");
+    pureweb.getClient().queueCommand('SetName', {"Name" : name});
+}
+
+//Key codes for simulating key events (used for the buttons on the bottom of the screen
+var FIRE_KEYCODE = 32; //Space key
+var THRUST_KEYCODE = 38; //Up cursor key
+var REVERSE_KEYCODE = 40; //Down cursor key
+var LEFT_KEYCODE = 37; //Left cursor key
+var RIGHT_KEYCODE = 39; //Right cursor key
+var SHIELDS_KEYCODE = 83; //'s' key
+
+//When a user clicks on a blue button (ex. fire)
+function simKeyDown(e, keyCode) {
+    if (e) {
+        var btn = e.target;
+        btn.style.backgroundColor='#9090E0';
+    }
+
+    //Simulate a keyboard event
+    queueKeyboardEvent('KeyDown', keyCode);
+
+    //Suppress the default action
+    e.preventDefault();
+}
+
+//When a user unclicks a blue button
+function simKeyUp(e, keyCode) {
+    if (e) {
+        var btn = e.target;
+        btn.style.backgroundColor='transparent';
+    }
+
+    queueKeyboardEvent('KeyUp', keyCode);
+
+    e.preventDefault();
+}
+
+//Send a keyboard event using a PureWeb command
+function queueKeyboardEvent(eventType, keyCode) {
+    //Create the keyboard event as a JS object
+    var parameters = {
+        'EventType': eventType,
+        'Path': 'AsteroidsView',
+        'KeyCode': keyCode,
+        'CharacterCode': 0,
+        'Modifiers': 0
+    };
+    //Send the PW command
+    pureweb.getClient().queueCommand('InputEvent', parameters);
+}
+
+//Wrapper for touch down events
+function touchDown(e) {
+    simKeyDown(e, FIRE_KEYCODE);
+    e.preventDefault();
+    return false;
+}
+
+//Wrapper for touch up events
+function touchUp(e) {
+    simKeyUp(e, FIRE_KEYCODE);
+    e.preventDefault();
+    return false;
+}
+
+//Fired when the user clicks the 'Share' button
+function generateShareUrl(){
+    //Grab a local ref to the webclient (save some typing)
+    var webClient = pureweb.getFramework().getClient();
+
+    //If we don't have a share URL...
+    if ((shareUrl === undefined) || (shareUrl === null)) {
+        //Generate a share URL (on the service)
+        webClient.getSessionShareUrlAsync('Scientific', '', 1800000, '', function(getUrl, exception) {
+            //Call back for share URL generation:
+            //If we got a valid Share URL
+            if ((getUrl !== null) && (getUrl !== undefined)) {
+                //Set it locally
+                shareUrl = getUrl;
+                window.prompt("Here is your collaboration URL:",getUrl);
+            } else {
+                alert('An error occurred creating the share URL: ' + exception.description);
+            }
+        });
+    } else {
+        //If a share URL already exists, we just want to invalidate it
+        webClient.invalidateSessionShareUrlAsync(shareUrl, function(exception) {
+            if ((exception !== undefined) && (exception !== null)){
+                alert('An error occurred invalidating the share URL: ' + exception);
+            } else {
+                shareUrl = null;
+            }
+        });
+    }
+}
+
+//When the level changes in AppState
+function onLevelChanged(event){
+    var level = 0;
+    //Get the new value from the event
+    var val = pureweb.util.tryParse(event.getNewValue(), Number);
+    //Change the background
+    if ((val !== null) && (val !== undefined)){
+        level = val % 5;
+        var path = '/img/background' + level + '.jpg';
+        document.getElementById('backgroundImg').src = path;
+    }
+}
+
+//Initialize the Frames-per-second counter in the top right corner
+function setupFPSCounter(asteroidsView) {
+    var timeLastUpdate = -1;
+    var interUpdateTimes = [];
+    var cumInterUpdateTimes = 0;
+    var fpsCounter = document.getElementById('fps-counter');
+
+    //Fires when the PW view is updated
+    var onViewUpdated = function() {
+        var now = Date.now();
+
+        if (timeLastUpdate > 0) {
+            var interUpdateTime = now - timeLastUpdate;
+            timeLastUpdate = now;
+            var numInterUpdateTimes = interUpdateTimes.length;
+
+            if (numInterUpdateTimes === 100) {
+                cumInterUpdateTimes -= interUpdateTimes[0];
+                interUpdateTimes.splice(0, 1);
+            }
+
+            cumInterUpdateTimes += interUpdateTime;
+            interUpdateTimes.push(interUpdateTime);
+            var fps = 1000.0 / (cumInterUpdateTimes / numInterUpdateTimes);
+            fpsCounter.textContent = 'FPS: ' + fps.toFixed(3);
+        }
+
+        timeLastUpdate = now;
+    };
+
+    //listen for view updated events
+    pureweb.listen(asteroidsView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
