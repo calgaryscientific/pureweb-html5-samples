@@ -139,6 +139,9 @@ var SHIELDS_KEYCODE = 83; //'s' key
 
 //When a user clicks on a blue button (ex. fire)
 function simKeyDown(e, keyCode) {
+     //Suppress the default action
+    e.preventDefault();
+
     if (e) {
         var btn = e.target;
         btn.style.backgroundColor='#9090E0';
@@ -146,21 +149,18 @@ function simKeyDown(e, keyCode) {
 
     //Simulate a keyboard event
     queueKeyboardEvent('KeyDown', keyCode);
-
-    //Suppress the default action
-    e.preventDefault();
 }
 
 //When a user unclicks a blue button
 function simKeyUp(e, keyCode) {
+    e.preventDefault();
+    
     if (e) {
         var btn = e.target;
         btn.style.backgroundColor='transparent';
     }
 
     queueKeyboardEvent('KeyUp', keyCode);
-
-    e.preventDefault();
 }
 
 //Send a keyboard event using a PureWeb command
@@ -179,15 +179,15 @@ function queueKeyboardEvent(eventType, keyCode) {
 
 //Wrapper for touch down events
 function touchDown(e) {
-    simKeyDown(e, FIRE_KEYCODE);
     e.preventDefault();
+    simKeyDown(e, FIRE_KEYCODE);
     return false;
 }
 
 //Wrapper for touch up events
 function touchUp(e) {
-    simKeyUp(e, FIRE_KEYCODE);
     e.preventDefault();
+    simKeyUp(e, FIRE_KEYCODE);
     return false;
 }
 
