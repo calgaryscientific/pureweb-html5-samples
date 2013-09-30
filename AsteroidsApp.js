@@ -66,20 +66,45 @@ function startAsteroids() {
 
     //register event listener for connected changed to create the Asteroids View
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
-
-    //setup the window.onbeforeunload callback to disconnect from the service application
-    window.onbeforeunload = window.onunload = function(e) {
-        if (client.isConnected()) {
-            client.disconnect(false);
-        }
-    };
-
+   
+    //Attach the listeners for disconnection events.
+    setDisconnectOnUnload(true);
+    
     //add an app state value changed handler to change the background image each time play
     //progresses a level.
     pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
 
     //now connect
     pureweb.connect(uri);
+}
+
+//This is important for tablets.  You typically want to have a PureWeb disconnection command
+//fire when you close your browser window (or navigate away).  However, on tablets, you run 
+//the risk that backgrounding the browser on an iOS or Android device might fire the disconnection
+//and shut down your app.  This function will allow you to easily attach / detach the listeners 
+//for these events.  You can then call this function to deactivate the listeners when you think 
+//the user might be about to background your app (like when they collaborate and switch to the 
+//email app to email the collaboration URL), then reattach when they have returned.
+//Generally this approach is not necessary for desktop browsers.
+function setDisconnectOnUnload(flag){
+    if (flag){
+        // setup the window.onbeforeunload callback to disconnect from the service application
+        var f = function(e) {
+            if (pureweb.getClient().isConnected()) {
+                pureweb.getClient().disconnect(false);
+            }
+            return null;
+        }
+        window.onbeforeunload = f;
+        window.onunload = f;    
+        window.onpagehide = f;
+    }
+    else
+    {
+        window.onbeforeunload = null;
+        window.onunload = null;    
+        window.onpagehide = null;
+    }
 }
 
 //Connected changed event handler - creates the AsteroidsView View instance and completes initialization.
@@ -198,6 +223,8 @@ function generateShareUrl(){
 
     //If we don't have a share URL...
     if ((shareUrl === undefined) || (shareUrl === null)) {
+        //Stop listening for disconnection events (as we expect the user to background the browser for emailing the collab url)
+        setDisconnectOnUnload(false);
         //Generate a share URL (on the service)
         webClient.getSessionShareUrlAsync('Scientific', '', 1800000, '', function(getUrl, exception) {
             //Call back for share URL generation:
@@ -205,7 +232,10 @@ function generateShareUrl(){
             if ((getUrl !== null) && (getUrl !== undefined)) {
                 //Set it locally
                 shareUrl = getUrl;
-                window.prompt("Here is your collaboration URL:",getUrl);
+                if (window.prompt("Here is your collaboration URL:",getUrl)){
+                    //Reattach the listeners for disconnection events
+                    setDisconnectOnUnload(true);                    
+                }
             } else {
                 alert('An error occurred creating the share URL: ' + exception.description);
             }
