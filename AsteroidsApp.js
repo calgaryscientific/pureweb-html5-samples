@@ -1,6 +1,17 @@
 //
 // Copyright (c) 2013 Calgary Scientific Inc., all rights reserved.
 //
+//IMPORTANT NOTE: This application is designed to show how to use PureWeb in its 
+//most basic form.  As such, best practices for developing JavaScript code are 
+//not always followed in the intrest of keeping the client code as simple as possible.
+//
+//Of particular note is the use of alert() and prompt() modal dialogs.  While these are 
+//used throughout this client, their use in a production setting is highly discouraged as
+//they block execution of the JavaScript thread, which will lead to the disconnection of 
+//the PureWeb client if they are not quickly dismissed.  Developers should instead use 
+//a non blocking modal such as those provided by JQuery or Boostrap, or simply window.console.log().
+//For more information on this topic, please see the PureWeb release notes.
+
 //START OF PRODUCTION REPLACE
 goog.require('pureweb');
 goog.require('pureweb.client.Framework');
@@ -115,8 +126,10 @@ function onSessionStateChanged(event) {
     var sessionState = pureweb.getClient().getSessionState();
     if (sessionState === pureweb.client.SessionState.FAILED) {
         if (lastSessionState === pureweb.client.SessionState.CONNECTING) {
+            //See note re: alert boxes at the top of the file
             alert('Unable to connect to the Asteroids service application.');
         } else {
+            //See note re: alert boxes at the top of the file            
             alert('Connection to the Asteroids service application has been lost. Refresh the page to restart.');
         }
     }
@@ -205,8 +218,11 @@ function generateShareUrl(){
             if ((getUrl !== null) && (getUrl !== undefined)) {
                 //Set it locally
                 shareUrl = getUrl;
+
+                //See note re: prompt boxes at the top of the file                
                 window.prompt("Here is your collaboration URL:",getUrl);
             } else {
+                //See note re: alert boxes at the top of the file
                 alert('An error occurred creating the share URL: ' + exception.description);
             }
         });
