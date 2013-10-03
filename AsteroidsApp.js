@@ -245,7 +245,7 @@ function generateShareUrl(){
             if ((getUrl !== null) && (getUrl !== undefined)) {
                 //Set it locally
                 shareUrl = getUrl;
-				/See note re: prompt boxes at the top of the file 
+				//See note re: prompt boxes at the top of the file 
                 if (window.prompt("Here is your collaboration URL:",getUrl)){
                     //Reattach the listeners for disconnection events
                     setDisconnectOnUnload(true);                    
