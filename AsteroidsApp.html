@@ -37,13 +37,16 @@
 
             <!--  This defines the Asteroids View -->
             <div id="AsteroidsView" class="purewebview"></div>
-                <img id="leftButton"  class="leftButton" src="/img/left.png" ontouchstart="simKeyDown(event, LEFT_KEYCODE);" ontouchend="simKeyUp(event, LEFT_KEYCODE);" onmspointerup="simKeyUp(event, LEFT_KEYCODE);" onmspointerdown="simKeyDown(event, LEFT_KEYCODE);"/>            
-                <img id="rightButton"  class="rightButton" src="/img/right.png" ontouchstart="simKeyDown(event, RIGHT_KEYCODE);" ontouchend="simKeyUp(event, RIGHT_KEYCODE);" onmspointerup="simKeyUp(event, RIGHT_KEYCODE);" onmspointerdown="simKeyDown(event, RIGHT_KEYCODE);"/>                         
-                <img id="forwardButton"  class="forwardButton" src="/img/forward.png" ontouchstart="simKeyDown(event, THRUST_KEYCODE);" ontouchend="simKeyUp(event, THRUST_KEYCODE);" onmspointerup="simKeyUp(event, THRUST_KEYCODE);" onmspointerdown="simKeyDown(event, THRUST_KEYCODE);"/> 
-                <img id="reverseButton"  class="reverseButton" src="/img/reverse.png" ontouchstart="simKeyDown(event, REVERSE_KEYCODE);" ontouchend="simKeyUp(event, REVERSE_KEYCODE);" onmspointerup="simKeyUp(event, REVERSE_KEYCODE);" onmspointerdown="simKeyDown(event, REVERSE_KEYCODE);"/>
-                <img id="fireButton"  class="fireButton" src="/img/fire.png" ontouchstart="touchDown(event);" ontouchend="touchUp(event);" onmspointerup="touchUp(event);" onmspointerdown="touchDown(event);"/>
-                <img id="shieldsButton"  class="shieldsButton" src="/img/shields.png" ontouchstart="simKeyDown(event, SHIELDS_KEYCODE);" ontouchend="simKeyUp(event, SHIELDS_KEYCODE);" onmspointerup="simKeyUp(event, SHIELDS);" onmspointerdown="simKeyDown(event, SHIELDS);"/>
-            </div>
+
+            <div id="leftButton"  class="leftButton" ontouchstart="simKeyDown(event, LEFT_KEYCODE);" ontouchend="simKeyUp(event, LEFT_KEYCODE);" 
+            onmspointerup="simKeyUp(event, LEFT_KEYCODE);" onmspointerdown="simKeyDown(event, LEFT_KEYCODE);"></div>
+            <div id="rightButton"  class="rightButton" ontouchstart="simKeyDown(event, RIGHT_KEYCODE);" ontouchend="simKeyUp(event, RIGHT_KEYCODE);" onmspointerup="simKeyUp(event, RIGHT_KEYCODE);" onmspointerdown="simKeyDown(event, RIGHT_KEYCODE);"></div>
+            <div id="forwardButton"  class="forwardButton" ontouchstart="simKeyDown(event, THRUST_KEYCODE);" ontouchend="simKeyUp(event, THRUST_KEYCODE);" onmspointerup="simKeyUp(event, THRUST_KEYCODE);" onmspointerdown="simKeyDown(event, THRUST_KEYCODE);"> </div>
+            <div id="reverseButton"  class="reverseButton" ontouchstart="simKeyDown(event, REVERSE_KEYCODE);" ontouchend="simKeyUp(event, REVERSE_KEYCODE);" onmspointerup="simKeyUp(event, REVERSE_KEYCODE);" onmspointerdown="simKeyDown(event, REVERSE_KEYCODE);"></div>
+            
+
+            <div id="fireButton"  class="fireButton" ontouchstart="touchDown(event);" ontouchend="touchUp(event);" onmspointerup="touchUp(event);" onmspointerdown="touchDown(event);"></div>
+            <div id="shieldsButton"  class="shieldsButton" ontouchstart="simKeyDown(event, SHIELDS_KEYCODE);" ontouchend="simKeyUp(event, SHIELDS_KEYCODE);" onmspointerup="simKeyUp(event, SHIELDS);" onmspointerdown="simKeyDown(event, SHIELDS);"></div>
         </div>
     </body>
 </html>

@@ -59,69 +59,80 @@ html, body {
     float:right;
 }
 
-.fireButton {
-    position:absolute;
-    padding:10px;
-    top:50%;
-    right:0px;
-    width:48px;
-    height:48px;
-    opacity: 0.5;
-    visibility:hidden;
-}
-
-.shieldsButton {
-    position:absolute;
-    padding: 10px;
-    top:50%;
-    right:68px;
-    width:48px;
-    height:48px;
-    opacity: 0.5;
-    visibility:hidden;
-}
-
 .leftButton {
     position:absolute;
-    padding: 10px;
+    padding: 0px;
     top:50%;
     left:0px;
     width:48px;
     height:48px;
     opacity: 0.5;
-    background-color:transparent;
     visibility:hidden;
+    background-image: url('/img/left.png');
+    background-repeat: no-repeat;
 }
 
 .rightButton {
     position:absolute;
-    padding: 10px;
+    padding: 0px;
     top:50%;
     left:136px;
     width:48px;
     height:48px;
     opacity: 0.5;
     visibility:hidden;
+    background-image: url('/img/right.png');
+    background-repeat: no-repeat;
 }
 
 .forwardButton {
     position:absolute;
-    padding: 10px;
+    padding: 0px;
     bottom:50%;
     left:68px;
     width:48px;
     height:48px;
     opacity: 0.5;
     visibility:hidden;
+    background-image: url('/img/forward.png');
+    background-repeat: no-repeat;
 }
 
 .reverseButton {
     position:absolute;
-    padding: 10px;
+    padding: 0px;
     top:50%;
     left:68px;
     width:48px;
     height:48px;
     opacity: 0.5;
     visibility:hidden;
+    background-image: url('/img/reverse.png');
+    background-repeat: no-repeat;
+}
+
+.fireButton {
+    position:absolute;
+    padding:0px;
+    top:50%;
+    right:0px;
+    width:48px;
+    height:48px;
+    opacity: 0.5;
+    visibility:hidden;
+    background-image: url('/img/fire.png');
+    background-repeat: no-repeat;
+}
+
+.shieldsButton {
+    position:absolute;
+    padding: 0px;
+    top:50%;
+    right:68px;
+    width:48px;
+    height:48px;
+    opacity: 0.5;
+    visibility:hidden;
+    background-image: url('/img/shields.png');
+    background-repeat: no-repeat;
 }
