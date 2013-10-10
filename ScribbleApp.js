@@ -109,7 +109,6 @@ function setDisconnectOnUnload(flag){
 //Connected changed event handler - creates the ScribbleView View instance and initializes the
 //diagnostics panel (if it is present).
 function onConnectedChanged(e) {
-    window.console.log('ConnectionChanging');
     if (e.target.isConnected()) {
         //register event listeners for connection stalled and session state failed events
         var client = pureweb.getClient();

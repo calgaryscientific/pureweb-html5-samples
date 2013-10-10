@@ -57,6 +57,8 @@ function startAsteroids() {
 
     //Set to low quality JPEG for performance over quality
     var encoderFormat = new pureweb.client.EncoderFormat('image/jpeg', 30, params);
+    //var encoderFormat2 = new pureweb.client.EncoderFormat('image/jpeg', 100, params);
+    
     var encoderConfig = new pureweb.client.EncoderConfiguration(encoderFormat, encoderFormat);
 
     //You should set the configuration before connecting so that the service knows what format to serve up the view
