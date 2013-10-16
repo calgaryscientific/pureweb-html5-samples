@@ -109,13 +109,11 @@ function setDisconnectOnUnload(flag){
         }
         window.onbeforeunload = f;
         window.onunload = f;    
-        window.onpagehide = f;
     }
     else
     {
         window.onbeforeunload = null;
         window.onunload = null;    
-        window.onpagehide = null;
     }
 }
 
