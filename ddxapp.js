@@ -461,8 +461,68 @@ ddxclient.onGridStateChanged = function(e){
 };
 
 /**
- * Ping the server 10 times and report the average ping interval
- */
+ * Instruct the service to ping the server and then report the result. In this method we do not receive or calculate timing on the client 
+ * but rather instructure the service to perform the ping against the server, we are only interested in the result. The ping is triggered by a
+ * command with the name 'DDxServiceServerPing' when the ping has been performed it writes the result into 'DDxServiceServerPingResponse'. For accuracy
+ * conduct this ping 10 times. **/
+
+//TODO Need to add timeout handling code
+ddxclient.serviceServerPing = function() {
+    
+    var totalPings = 10; 
+
+    var results = { 
+        sum: 0, 
+        count : 0, 
+        average: 0, 
+        maximum: 0
+    }
+
+    var updatePing = function(currentPingTime) { 
+        var resultsElement = goog.dom.getElement('serverServicePingReport');  
+        resultsElement.innerHTML =  (results.count) + ': ' + currentPingTime.toFixed(2) + 'ms Max: ' + results.maximum.toFixed(2) + ' Avg: ' + results.average.toFixed(2); 
+    }
+
+    var performPing = function(pingsRemaining) {
+
+        //Base Case
+        if(pingsRemaining == 0) {
+            
+            //Need to remove the change handler because it keeps a closure reference to everything
+            pureweb.getFramework().getState().getStateManager().removeAllValueChangedHandlers('DDxServiceServerPingResponseCount');
+
+        }
+
+        pureweb.getClient().queueCommand('DDxServiceServerPing', null, function (sender, args) {
+            pureweb.getClient().logger.fine('Ping Trigger ' + pingsRemaining + ' Sent to Service'); 
+        });
+    }; 
+
+
+    pureweb.getFramework().getState().getStateManager().addValueChangedHandler('DDxServiceServerPingResponseCount', function (pingResponseReceivedEvent) {
+
+        var pingResult = pureweb.getFramework().getState().getStateManager().getValue('DDxServiceServerPingResponse');
+        pingResultAsMilliseconds = pureweb.util.tryParse(pingResult, Number);  
+
+
+        results.count++; 
+        results.sum += pingResultAsMilliseconds
+
+        //Compute the average and maximum ping time 
+        results.average = (results.sum/results.count);
+
+        results.maximum = Math.max(results.maximum, pingResultAsMilliseconds);
+
+        //Call performPing again ... 
+        updatePing(pingResultAsMilliseconds); 
+        performPing(totalPings - results.count); 
+    }); 
+
+    performPing(totalPings); 
+
+}
+
+
 ddxclient.doPing = function() {
     if (!ddxclient.count) {
        ddxclient.count = 0;
@@ -471,8 +531,8 @@ ddxclient.doPing = function() {
     }
     var startPing = new Date().getTime();
 
-    pureweb.getClient().queueCommand('DDxPing', null, function (sender, args) {
-       pureweb.getClient().logger.fine('Ping Response: ' + args.getResponse().getElementsByTagName('PingResponse')[0].textContent);
+    pureweb.getClient().queueCommand('DDxRoundtripPing', null, function (sender, args) {
+       pureweb.getClient().logger.fine('Ping Response: ' + args.getResponse().getElementsByTagName('DDxClientPingResponse')[0].textContent);
        pureweb.getClient().logger.fine(args.getResponse());
 
         //Uncomment to test multipart handler client exception reporting
@@ -487,7 +547,7 @@ ddxclient.doPing = function() {
        } else {
            var duration = new Date().getTime() - startPing;
            ddxclient.avg = ddxclient.avg + duration;
-           var lblEl = goog.dom.getElement('lblPingReport');
+           var lblEl = goog.dom.getElement('roundtripPingReport');
            if (ddxclient.count<10) {
                ddxclient.count++;
                ddxclient.maxPing = Math.max(duration, ddxclient.maxPing);
@@ -496,7 +556,7 @@ ddxclient.doPing = function() {
            } else {
                ddxclient.count = 0;
                ddxclient.avg = 0;
-               goog.dom.getElement('btnPing');
+               goog.dom.getElement('roundtripPingButton');
            }
        }
     });

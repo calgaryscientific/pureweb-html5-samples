@@ -185,8 +185,10 @@
                 <span id="lblSpacing">spacing</span>
                 <span id="lblGridSpace" style="width:32px;">(0)</span>
                 <button id="btnClearMarkup" onclick="ddxclient.onClearMarkupClicked();">Clear Markup</button>
-                <button id="btnPing" onclick="ddxclient.doPing();">Ping</button>
-                <span id="lblPingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <button id="roundtripPingButton" onclick="ddxclient.doPing();">Roundtrip Ping</button>
+                <span id="roundtripPingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <button id="serviceServerPingButton" onclick="ddxclient.serviceServerPing();">Service-Server Ping</button>
+                <span id="serverServicePingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
                 <input id="chkInputTransmissionEnabled" type="checkbox" checked="on" onClick="ddxclient.onInputTransmissionEnabledClicked();">inputTransmissionEnabled</input>
             </div>
 
