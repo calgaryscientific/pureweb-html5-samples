@@ -17,10 +17,6 @@
     <script src="/HTML5/src/code/deps.js"></script>
     <script src="/logConfig.js"></script>
     <script src="/HTML5/src/code/pureweb/client.js"></script>
-    
-
-    <script src="/HTML5/lib/h264bsd/h264bsd.min.js"></script>
-    <script src="/HTML5/src/extras/H264Renderer.js"></script>    
 
     <script src="/ddxapp.js"></script>
 
@@ -343,6 +339,9 @@
         goog.events.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.OWNER_SESSION_CHANGED,
                 ddxclient.onOwnerSessionChanged);
-   </script>
+    </script>
+
+    <!--Uncomment for access to the H264 decoder
+    <script src="/lib/pureweb/pureweb.h264.min.js"></script>-->
 </body>
 </html>
