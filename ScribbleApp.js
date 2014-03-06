@@ -44,7 +44,11 @@ function startScribble() {
     }
 
     var scribbleView = new pureweb.client.View({id: 'ScribbleView', viewName: 'ScribbleView'});
-    
+   
+    var interactiveQuality = new pureweb.client.EncoderFormat(pureweb.SupportedEncoderMimeType.JPEG, 30, {});
+    var fullQuality = new pureweb.client.EncoderFormat(pureweb.SupportedEncoderMimeType.JPEG, 70, {});
+    scribbleView.setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
+
     pureweb.listen(scribbleView, pureweb.client.View.EventType.TOUCH_EVENT_RECEIVED, function(e) {
            var event = e.args;
            
