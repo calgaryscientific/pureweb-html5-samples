@@ -330,16 +330,6 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.pgView = new ddxclient.AnnotatedView({id: 'pgview', 'viewName': 'PGView'});
         ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
 
-        //set encoder config for views
-        var interactiveQuality = new pureweb.client.EncoderFormat(pureweb.SupportedEncoderMimeType.JPEG, 30, {});
-        var fullQuality = new pureweb.client.EncoderFormat(pureweb.SupportedEncoderMimeType.JPEG, 70, {});
-        ddxclient.ddxViews[0].setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
-        ddxclient.ddxViews[1].setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));    
-        ddxclient.ddxViews[2].setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
-        ddxclient.ddxViews[3].setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
-        ddxclient.pgView.setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
-        ddxclient.ddxOwnershipView.setEncoderConfiguration(new pureweb.client.EncoderConfiguration(interactiveQuality, fullQuality));
-
         ddxclient.ddxViews[0].setAcetateToolset(toolset);
         ddxclient.ddxViews[1].setAcetateToolset(toolset);
         ddxclient.ddxViews[2].setAcetateToolset(toolset);
