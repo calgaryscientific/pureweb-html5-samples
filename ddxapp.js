@@ -29,9 +29,9 @@ goog.require('pureweb.client.collaboration.PolylineTool');
  **/
 purewebLogConfig = function() {
     return {
-        'goog': goog.debug.Logger.Level.CONFIG,
-        'goog.dom': goog.debug.Logger.Level.FINER,
-        'pureweb': goog.debug.Logger.Level.FINEST
+        'goog': pureweb.util.loggingLevel.CONFIG,
+        'goog.dom': pureweb.util.loggingLevel.FINER,
+        'pureweb': pureweb.util.loggingLevel.FINEST
     };
 };
 

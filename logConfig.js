@@ -1,11 +1,12 @@
 purewebLogConfig = function() {
 	return {
-		'pureweb': goog.debug.Logger.Level.CONFIG
+		'pureweb': pureweb.util.loggingLevel.CONFIG
 
 		// 'pureweb.client': 'DEBUG', //Intentional bad value
+		
 		// Other optional logging objects & levels
-		// 'pureweb.client.Framework': goog.debug.Logger.Level.CONFIG,
-		// 'pureweb.client.WebClient': goog.debug.Logger.Level.INFO,
-		// 'pureweb.client.View'     : goog.debug.Logger.Level.FINE
+		// 'pureweb.client.Framework': pureweb.util.loggingLevel.CONFIG,
+		// 'pureweb.client.WebClient': pureweb.util.loggingLevel.INFO,
+		// 'pureweb.client.View'     : pureweb.util.loggingLevel.FINE
 	}
 }
