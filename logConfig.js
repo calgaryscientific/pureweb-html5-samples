@@ -1,6 +1,6 @@
 purewebLogConfig = function() {
 	return {
-		'pureweb': pureweb.util.loggingLevel.CONFIG
+		'pureweb': pureweb.util.loggingLevel.FINEST
 
 		// 'pureweb.client': 'DEBUG', //Intentional bad value
 		
