@@ -127,6 +127,7 @@ ddxclient.DDxEcho = '/DDx/Echo/';
 ddxclient.DDxEchoContent = 'Content';
 ddxclient.DDxEchoType = 'Type';
 ddxclient.DDxEchoKey = 'Key';
+ddxclient.imageCounter = 0;
 
 ddxclient.runBabelTest = function(){
     ddxclient.resetBabelTest();
@@ -585,8 +586,21 @@ ddxclient.AnnotatedView = function(args) {
     pureweb.getFramework().registerViewRenderer(pureweb.SupportedEncoderMimeType.BASE64_PNG, ddxclient.createCustomRenderer);
 
     goog.events.listen(this,
-                       pureweb.client.View.EventType.VIEW_UPDATED,
-                       function(e) {this.annotateView_();},
+                        pureweb.client.View.EventType.VIEW_UPDATED,
+                        function(e) {
+                            this.annotateView_();
+                            
+                            //We check for the case in which we might have out of order 
+                            //views coming across (PWEB-4532)
+                            if ((e.args.params_ !== null) && (typeof e.args.params_ !== 'undefined')){
+                                var counter = parseInt(e.args.params_.imagecounter);
+                                console.log('decoded counter: ', counter, ' local counter: ', ddxclient.imageCounter);
+                                if (counter < ddxclient.imageCounter){
+                                    alert('I need an adult! Images are coming in out of order!  Last image ' + ddxclient.imageCounter + ' current img: ' + counter);
+                                }
+                                ddxclient.imageCounter = counter;
+                            }                            
+                        },
                        false,
                        this);
 
