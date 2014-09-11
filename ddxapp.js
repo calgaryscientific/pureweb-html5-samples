@@ -44,12 +44,6 @@ ddxclient.encoderConfigs = {};
  * Connect to the DDx service app.
  */
 ddxclient.appLoaded = function(e) {
-    var uri = location.href;
-
-    if (!pureweb.getClient().isaSessionUri(uri)) {
-        uri = location.protocol + '//' + location.host + '/pureweb/app?name=' + pureweb.getServiceAppName(uri);
-    }
-
     goog.events.listen(pureweb.getFramework().getCollaborationManager(),
                        pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                        ddxclient.updateOwnerSession);
@@ -63,7 +57,7 @@ ddxclient.appLoaded = function(e) {
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
 
-    pureweb.connect(uri);
+    pureweb.connect(location.href);
 };
 
 /**

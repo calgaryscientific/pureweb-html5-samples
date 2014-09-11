@@ -33,15 +33,6 @@ var asteroidsView = null;
 //state changed handlers. and register a callback for window.onbeforeunload to
 //disconnect from the service application before the page is unloaded.
 function startAsteroids() {
-    var uri = location.href;
-
-    //if the Asteroids client was downloaded using an app URI then at this point location.href
-    //will be the session URI to connect with. Otherwise Scribble was downloaded using a view
-    //URI, so construct the app URI (without the client) to connect with.
-    if (!pureweb.getClient().isaSessionUri(uri)) {
-        uri = location.protocol + '//' + location.host + '/pureweb/app?name=' + pureweb.getServiceAppName(uri);
-    }
-
     //Create the view object for when we're ready to connect
     asteroidsView = new pureweb.client.View({id: 'AsteroidsView', viewName: 'AsteroidsView'});
 
@@ -87,7 +78,7 @@ function startAsteroids() {
     pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
 
     //now connect
-    pureweb.connect(uri);
+    pureweb.connect(location.href);
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command

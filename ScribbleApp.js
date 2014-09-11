@@ -18,9 +18,6 @@ goog.require("pureweb");
 goog.require("pureweb.client.Framework");
 goog.require("pureweb.client.WebClient");
 goog.require("pureweb.client.View");
-goog.require("pureweb.client.EncoderFormat");
-goog.require("pureweb.client.EncoderConfiguration");
-goog.require("pureweb.SupportedEncoderMimeType");
 goog.require("pureweb.IllegalArgumentException");
 //END OF PRODUCTION REPLACE
 
@@ -33,16 +30,7 @@ var lastSessionState = null;
 //Connect to the Scribble service application, setup event listeners, application
 //state changed handlers. and add register a callback for window.onbeforeunload to
 //disconnect from the service application before the page is unloaded.
-function startScribble() {
-    var uri = location.href;
-
-    //if the Scribble client was downloaded using an app URI then at this point location.href
-    //will be the session URI to connect with. Otherwise Scribble was downloaded using a view
-    //URI, so construct the app URI (without the client) to connect with.
-    if (!pureweb.getClient().isaSessionUri(uri)) {
-        uri = location.protocol + '//' + location.host + '/pureweb/app?name=' + pureweb.getServiceAppName(uri);
-    }
-
+function startScribble() {    
     var scribbleView = new pureweb.client.View({id: 'ScribbleView', viewName: 'ScribbleView'});
    
     pureweb.listen(scribbleView, pureweb.client.View.EventType.TOUCH_EVENT_RECEIVED, function(e) {
@@ -74,7 +62,7 @@ function startScribble() {
     pureweb.listen(framework, pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged);
     
     //everything is setup and ready to go - connect
-    pureweb.connect(uri);
+    pureweb.connect(location.href);
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command
