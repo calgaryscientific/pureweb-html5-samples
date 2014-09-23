@@ -663,20 +663,20 @@ ddxclient.AnnotatedView.prototype.annotateView_ = function() {
     context.fillStyle = 'cyan';
     context.font = '10pt Arial';
     var fakedHeight = context.measureText('m').width;
-    var stateLock = pureweb.getFramework().getState().getStateManager().acquireLock();
-    if (stateLock !== null){
+    var state = pureweb.getFramework().getState().getStateManager().getState();
+    if (state !== null){
         var path = this.pathPrefix_ + '/MouseEvent';
-        context.fillText('MouseEvent Type: ' + stateLock.getValue(path + '/Type'), 5, fakedHeight + 4);
-        context.fillText('ChangedButton: ' + stateLock.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * 2);
-        context.fillText('Buttons: ' + stateLock.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * 3);
-        context.fillText('Modifiers: ' + stateLock.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 4);
-        context.fillText('X: ' + stateLock.getValue(path + '/X') + ' Y: ' + stateLock.getValue(path + '/Y'), 5, (fakedHeight + 4) * 5);
+        context.fillText('MouseEvent Type: ' + state.getValue(path + '/Type'), 5, fakedHeight + 4);
+        context.fillText('ChangedButton: ' + state.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * 2);
+        context.fillText('Buttons: ' + state.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * 3);
+        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 4);
+        context.fillText('X: ' + state.getValue(path + '/X') + ' Y: ' + state.getValue(path + '/Y'), 5, (fakedHeight + 4) * 5);
 
         path = this.pathPrefix_ + '/KeyEvent';
-        context.fillText('KeyEvent Type: ' + stateLock.getValue(path + '/Type'), 5, (fakedHeight + 4) * 7);
-        context.fillText('KeyCode: ' + stateLock.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * 8);
-        context.fillText('CharacterCode: ' + stateLock.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * 9);
-        context.fillText('Modifiers: ' + stateLock.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 10);
+        context.fillText('KeyEvent Type: ' + state.getValue(path + '/Type'), 5, (fakedHeight + 4) * 7);
+        context.fillText('KeyCode: ' + state.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * 8);
+        context.fillText('CharacterCode: ' + state.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * 9);
+        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 10);
     }
 
     context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * 12);
