@@ -64,11 +64,6 @@ ddxclient.appLoaded = function(e) {
  * Data types for testing babel
  */
 ddxclient.babelData = {
-        'DateTime-Regular': { type : 'DateTime', data : new Date(2000, 1, 2)},
-        'DateTime-StandardTime' : { type : 'DateTime', data : new Date(2009, 3, 8, 1, 30, 0)},
-        'DateTime-DSTInvalidTime' : { type : 'DateTime', data : new Date(2009, 3, 8, 3, 0, 0)},
-        'DateTime-DST' : { type : 'DateTime', data : new Date(2009, 3, 8, 3, 0, 0)},
-        'DateTime-DST-ST-AmbiguousTime' : { type : 'DateTime', data : new Date(2009, 11, 1, 1, 30, 0)},
         'Character' : {type : 'Character', data : 'c'},
         'Integer-Positive': { type : 'Integer', data : 1234567890},
         'Integer-Negative': { type : 'Integer', data : -1234567890},
@@ -139,11 +134,7 @@ ddxclient.testBabel = function(babelContent){
             ddxclient.setBabelCellState('pwDiagnosticsBableAppState_', key, undefined, 'Checking...');
             var dict = {};
             dict[ddxclient.DDxEchoKey] = key;
-            if (babelContent[key].type === 'DateTime'){
-                dict[ddxclient.DDxEchoContent] =  pureweb.util.getPureWebDateString(babelContent[key].data);
-            }else{
-                dict[ddxclient.DDxEchoContent] = babelContent[key].data;
-            }
+            dict[ddxclient.DDxEchoContent] = babelContent[key].data;
             dict[ddxclient.DDxEchoType] = babelContent[key].type;
 
             pureweb.getClient().queueCommand('Echo', dict, ddxclient.onEchoResponse);
@@ -198,9 +189,7 @@ ddxclient.checkLocaleData = function(babelContents, key, content, contentPath, c
         newContent = newContent.toExponential(7);
     } else if (babelContents[key].type === 'Boolean'){
         newContent = pureweb.xml.XmlUtility.getTextAs({parent: content, childPath: contentPath}, Boolean);
-    } else if (babelContents[key].type === 'DateTime'){
-        newContent = pureweb.xml.XmlUtility.getTextAs({parent: content, childPath: contentPath}, Date);
-    }
+    } 
 
     var same = false;
     //Because NaN !== NaN
