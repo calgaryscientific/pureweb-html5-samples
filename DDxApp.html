@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<!--
+    Copyright (c) 2012 Calgary Scientific Inc., all rights reserved.
+
+    DDx HTML5 STK client. Based on the TabPane closure demo available at:
+
+    http://closure-library.googlecode.com/svn/trunk/closure/goog/demos/index.html
+-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>PureWeb DDxClient</title>
+    
+    <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
+    <script src="/HTML5/src/code/deps.js"></script>
+    <script src="/logConfig.js"></script>
+    <script src="/HTML5/src/code/pureweb/client.js"></script>
+
+    <script src="/ddxapp.js"></script>
+
+    <script>
+        goog.require('goog.dom');
+        goog.require('goog.events');
+        goog.require('goog.ui.Component');
+        goog.require('goog.ui.Slider');
+        goog.require('goog.ui.Checkbox');
+        goog.require('goog.ui.TabPane');
+        goog.require('goog.ui.Tab');
+        goog.require('goog.ui.TabBar');
+        goog.require('goog.array');
+        goog.require('goog.Uri');
+        goog.require('goog.Uri.QueryData');
+        goog.require('goog.debug.Logger');
+        goog.require('goog.debug.Logger.Level');
+        goog.require('goog.debug.DivConsole');
+        goog.require('goog.array');
+        goog.require('ddxclient');
+        goog.require('pureweb.client.diagnostics.DiagnosticsPanel');
+    </script>
+
+    <link rel="stylesheet" href="/css/ddxclient.css"></link>
+    <link rel="stylesheet" href="/css/slider.css"></link>
+    <link rel="stylesheet" href="/css/checkbox.css"></link>
+    <link rel="stylesheet" href="/css/button.css"></link>
+
+    <style>
+        html, body {
+           width: 100%;
+           height: 100%;
+           margin: 0px 1px 0px -2px;
+           font-family: sans-serif;
+           font-size: 11pt;
+        }
+
+        .goog-tabpane {
+            background: threedface;
+            padding-left: 1px;
+            position: relative;
+            height: 100%;
+            overflow:hidden;
+            display:block;
+        }
+
+        .purewebview:focus {outline: none;}
+
+        .goog-tabpane-tabs:focus { outline: none;}
+
+        .goog-tabpane-tabs {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+            height: 1ex;
+            position: relative;
+         }
+
+         .goog-tabpane-cont {
+             background: threedface;
+             border: 1px solid;
+             border-color: threedhighlight threedshadow threedshadow threedhighlight;
+             padding: 0px;
+             position: absolute;
+             top: 25px;
+             bottom: 3px;
+             width: 100%;
+         }
+
+         .goog-tabpane-tab, .goog-tabpane-tab-selected {
+            display: block;
+            padding: 3px 3ex 3px;
+            background: threedface;
+            border: 1px solid;
+            margin: 0px;
+         }
+
+         .goog-tabpane-top .goog-tabpane-tab,
+         .goog-tabpane-top .goog-tabpane-tab-selected {
+             float: left;
+         }
+
+         .goog-tabpane-top .goog-tabpane-tab,
+         .goog-tabpane-top .goog-tabpane-tab-selected {
+             border-color: threedhighlight threedshadow threedface threedhighlight;
+         }
+
+         .goog-tabpane-top .goog-tabpane-tab {
+             margin-top: 3px;
+         }
+
+         .goog-tabpane-tab-selected {
+             font-weight: bold;
+         }
+
+         .goog-tabpane-tab-selected,
+         .goog-tabpane-tab-selected {
+             padding-bottom: 2px;
+             padding-top: 2px;
+         }
+
+         .goog-tabpane-top .goog-tabpane-tab-selected {
+            position: relative;
+            top: 1px;
+         }
+
+         p {
+             margin-top: 0px;
+         }
+
+         table {
+            border-spacing:0;
+            border-collapse:collapse;
+         }
+
+         table, td {
+            border: 1px solid black;
+            padding: 2px;
+            font-size: 9pt;
+         }
+
+         th{
+            font-size: 14px;
+         }
+    </style>
+</head>
+<body>
+
+    <!-- Start of diagnostics panel -->
+   <script src="/pureweb.js"></script>
+   <script src="/bandwidth.js"></script>
+   <div id='pwDiagnosticsPanel'></div>
+   <script>pureweb.client.diagnostics.initialize();</script>
+    <!-- End of diagnostics panel -->
+
+
+
+    <div id="tabpane"></div>  
+
+    <div id="ddxview_tab" style="width:100%; height:100%;">
+        <div style="position: absolute; top: 0px; bottom: 30px; width:100%;">
+            <div id="ddxview0" class="purewebview" style="width: 50%; height: 50%; float: left"></div>
+            <div id="ddxview1" class="purewebview" style="width: 50%; height: 50%; float: left"></div>
+            <div id="ddxview2" class="purewebview" style="width: 50%; height: 50%; float: left;"></div>
+            <div id="ddxview3" class="purewebview" style="width: 50%; height: 50%; float: left;"></div>
+        </div>
+        <div id="ddxview_footer" style="position: absolute; bottom: 0px; height: 30px; vertical-align: middle; font-size: 12px; margin-left: 4px; vertical-align: middle;">
+
+            <div class="goog-inline-block">
+                Grid:
+                <input id="chkGridOn" type="checkbox" checked="true" onclick="ddxclient.gridOn_Click();">on</input>
+            </div>
+            <div class="goog-inline-block" id="s-h" style="vertical-align: middle; margin-left:8px;">
+                <div id="s1" class="goog-slider" style="width: 150px; height: 20px">
+                    <!-- Add a horizontal line to the slider -->
+                    <div style="position:absolute;
+                                width:100%;
+                                top:9px;
+                                border:1px inset white;
+                              overflow:hidden;
+                              height:0">
+                    </div>
+                  <div class="goog-slider-thumb"></div>
+                </div>
+            </div>
+
+            <div class="goog-inline-block">
+                <span id="lblSpacing">spacing</span>
+                <span id="lblGridSpace" style="width:32px;">(0)</span>
+                <button id="btnClearMarkup" onclick="ddxclient.onClearMarkupClicked();">Clear Markup</button>
+                <button id="roundtripPingButton" onclick="ddxclient.doPing();">Roundtrip Ping</button>
+                <span id="roundtripPingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <button id="serviceServerPingButton" onclick="ddxclient.serviceServerPing();">Service-Server Ping</button>
+                <span id="serverServicePingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <input id="chkInputTransmissionEnabled" type="checkbox" checked="on" onClick="ddxclient.onInputTransmissionEnabledClicked();">inputTransmissionEnabled</input>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div id="pgview_tab" style="width: 100%; height: 100%;">
+        <div style="position: absolute; top: 0px; bottom: 30px; width:100%; border:2px solid;">
+            <div id="pgview" class="purewebview" style="width: 100%; height: 100%;"></div>
+            <div id="screenshotDiv" style="position: absolute; top: 20px; bottom: 20px; left: 20px; right: 20px; display:none; background-color: #F0F0F0; border: 1px solid #FFFFFF; text-align:center;">
+                <input id='txtResourceUrl' type="text" readOnly="true" style="width: 100%"/>
+                <img id="screenshotImage" src="" style="width: 100%; height: 90%;"/>
+                <button id="btnDismissScreenshotDiv" onClick="ddxclient.onClickDismissScreenshotDiv();">OK</button>
+            </div>
+        </div> 
+
+        <div id="pgview_footer" style="position: absolute; bottom: 0px; height: 30px; vertical-align: middle; font-size: 12px; margin-left: 4px; vertical-align: middle;">
+
+            <div class="goog-inline-block">
+                <button id="btnSaveScreen" onClick="ddxclient.onSaveScreenShotClicked();">Save Screenshot</button>
+                <button id="btnClearMarkupPGView" onClick="ddxclient.onClearMarkupClicked();">Clear Markup</button>
+                <input id="chkAsyncImgGen" type="checkbox" onClick="ddxclient.booleanAppStateHandler(this);">AsyncImageGeneration</input>
+                <input id="chkUseDeferredRendering" type="checkbox" checked="checked" onClick="ddxclient.booleanAppStateHandler(this);">UseDeferredRendering</input>
+                <input id="chkUseClientSize" type="checkbox" checked="checked"onClick="ddxclient.booleanAppStateHandler(this);">UseClientSize</input>
+                <input id="chkShowMousePos" type="checkbox" checked="checked" onClick="ddxclient.booleanAppStateHandler(this);">ShowMousePos</input>
+            </div>
+        </div>
+    </div>
+
+    <div id="collaboration_tab" style="width: 100%; height: 100%;">
+        <div id="collaborationForm" style="padding: 8px;">
+            <div class="goog-inline-block label-column" style="text-align:center;">
+                <button id="btnShare" onClick="ddxclient.onShareButtonClicked();">Share</button>
+            </div>
+            <div class="goog-inline-block field-column">
+                <input id='txtShareUrl' type="text" style="width: 100%"/>
+            </div>
+        </div>
+        <div id="userInfoForm" style="padding: 8px;">
+            <div>
+                <span><b>User Information</b></span>
+            </div>
+            <div class="goog-inline-block label-column">
+                <span>name:</span>
+            </div>
+            <div class="goog-inline-block field-column">
+                <input id="txtName" type="text" style="width: 100%"/>
+            </div>
+            <div class="goog-inline-block label-column">
+                <span>email:</span>
+            </div>
+            <div class="goog-inline-block field-column">
+                <input id="txtEmail" type="text" style="width: 100%"/>
+                <div>
+                    <button id="btnSetUserInfo" style="width: 120px;" onClick="ddxclient.onSetUserInfoButtonClicked();">Set User Info</button>
+                </div>
+                <div>
+                    <button id="btnTakeOwnership" style="width: 120px;" onclick="ddxclient.onTakeOwnershipClicked();">Take ownership</button>
+                    <span class="goog-inline-block">current owner:</span>
+                    <span id="lblCurrentOwner" class="goog-inline-block"></span>
+                </div>
+            </div>
+        </div>
+        <div id="participantsPanel" style="padding: 8px;">
+            <span><b>Participants</b></span>
+            <div id="lstParticipants" style="width: 100%; height: 320px; border: 1px solid gray;"></div>
+        </div>
+    </div>
+
+    <div id="aspectandownership_tab" style="width: 100%; height: 100%;">
+         <div id="aspectandownership" class="purewebview" style="width: 100%; height: 100%;"></div>
+    </div>
+
+    <div id="babel_tab" style="width:100%; height: 100%;">
+        <div id=pwDiagnosticsBabelUTFDiv" style="width:100%; height: 230px; overflow-y:scroll; ">
+            <table id='pwDiagnosticsBabelTable' style="width:100%">
+                <tr>
+                    <th style="width:25%">Language</th><th style="width:25%">Phrase</th><th style="width:25%">Command Response</th><th style="width:25%">App State</th>
+                </tr>
+            </table>
+          </div>
+         <br/>
+         <div id=pwDiagnosticsBabelDataDiv" style="width:100%; height: 50%; overflow:auto;">
+            <table id='pwDiagnosticsDataTypesTable' style="width:100%">
+                <tr>
+                    <th style="width:25%">Data Type</th><th style="width:25%">Data</th><th style="width:25%">Command Response</th><th style="width:25%">App State</th>
+                </tr>
+            </table>
+         </div>
+
+         <hr/>
+        <button id='pwDiagnosticsBabelRunTest' onclick='ddxclient.runBabelTest();'>Run Tests</button>
+        <button id='pwDiagnosticsBabelResetTest' onclick='ddxclient.resetBabelTest();'>Reset</button>
+
+    </div>
+
+    <script>
+        var el = document.getElementById('s1');
+        var s = new goog.ui.Slider();
+        s.setMinimum(50);
+        s.setMaximum(200);
+        s.setBlockIncrement(25);
+        s.setMoveToPointEnabled(true); //Better for touch UIs
+        s.setValue(100);
+        document.getElementById('lblGridSpace').innerHTML = '(' + s.getValue() + ')';
+        s.decorate(el);
+        s.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
+          document.getElementById('lblGridSpace').innerHTML = '(' + s.getValue() + ')';
+          ddxclient.gridSpacing_ValueChanged(s.getValue());
+        });
+    </script>
+
+    <script>
+        var tabPane = new goog.ui.TabPane(document.getElementById('tabpane'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('ddxview_tab'), 'DDxView'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('pgview_tab'), 'PGView'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('collaboration_tab'), 'Collaboration'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('aspectandownership_tab'), 'Aspect and Ownership'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('babel_tab'), 'Babel'));
+
+        function tabChanged(event) {
+            var index = event.currentTarget.getSelectedIndex();
+            if (index === 0) {
+                goog.array.forEach(ddxclient.ddxViews, function(v) {v.resize()});
+            } else if (index === 1) {
+                ddxclient.pgView.resize();
+            } else if (index === 3) {
+                ddxclient.ddxOwnershipView.resize();
+            }
+            
+        };
+
+        goog.events.listen(tabPane, goog.ui.TabPane.Events.CHANGE, tabChanged);
+        tabPane.setSelectedIndex(0);
+        goog.events.listen(window, 'load', ddxclient.appLoaded);
+
+        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+                pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
+                ddxclient.onCollaborationStateInitialized);
+
+        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+                pureweb.client.CollaborationManager.EventType.SESSIONS_CHANGED,
+                ddxclient.onSessionsChanged);
+
+        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+                pureweb.client.CollaborationManager.EventType.OWNER_SESSION_CHANGED,
+                ddxclient.onOwnerSessionChanged);
+    </script>
+
+    <!--Uncomment for access to the H264 decoder-->
+    <script src="/lib/pureweb/pureweb.h264.min.js"></script>
+</body>
+</html>

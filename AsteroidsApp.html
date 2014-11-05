@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Meta tags to support optimal displaying on different platforms -->
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+        <title>PureWeb&#174; HTML5 Asteroids App Sample</title>
+
+        <!-- START OF PRODUCTION REPLACE -->
+        <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
+        <script src="/HTML5/src/code/deps.js"></script>
+        <script src="/AsteroidsApp.js"></script>        
+        <script src="/pureweb.js"></script>
+        <script src="/bandwidth.js"></script>    
+		<link rel="stylesheet" href="/css/asteroidsapp.css"/>
+        <!-- END OF PRODUCTION REPLACE -->
+        
+        <!-- Define the optional logging configuration in an external script -->
+        <!--<script src="/logConfig.js"></script>-->
+        
+    </head>
+
+    <body onLoad="startAsteroids();">
+        <div id="controls">
+            <button id="setNameButton" onclick="getName();">Set Name</button>
+            <button id="shareButton" onclick="generateShareUrl();">Share</button>
+            <div id="fps-counter" class="fps-counter">FPS:</div>
+        </div>
+
+		<!-- Start of diagnostics panel -->
+        <div id="pwDiagnosticsPanel"></div>
+		<!-- End of diagnostics panel -->
+
+        <div id="wrapper">
+            <img id="backgroundImg" src="/img/background0.jpg"/>
+
+            <!--  This defines the Asteroids View -->
+            <div id="AsteroidsView" class="purewebview"></div>
+
+            <div id="leftButton"  class="leftButton" ontouchstart="simKeyDown(event, LEFT_KEYCODE);" ontouchend="simKeyUp(event, LEFT_KEYCODE);" 
+            onmspointerup="simKeyUp(event, LEFT_KEYCODE);" onmspointerdown="simKeyDown(event, LEFT_KEYCODE);"></div>
+            <div id="rightButton"  class="rightButton" ontouchstart="simKeyDown(event, RIGHT_KEYCODE);" ontouchend="simKeyUp(event, RIGHT_KEYCODE);" onmspointerup="simKeyUp(event, RIGHT_KEYCODE);" onmspointerdown="simKeyDown(event, RIGHT_KEYCODE);"></div>
+            <div id="forwardButton"  class="forwardButton" ontouchstart="simKeyDown(event, THRUST_KEYCODE);" ontouchend="simKeyUp(event, THRUST_KEYCODE);" onmspointerup="simKeyUp(event, THRUST_KEYCODE);" onmspointerdown="simKeyDown(event, THRUST_KEYCODE);"> </div>
+            <div id="reverseButton"  class="reverseButton" ontouchstart="simKeyDown(event, REVERSE_KEYCODE);" ontouchend="simKeyUp(event, REVERSE_KEYCODE);" onmspointerup="simKeyUp(event, REVERSE_KEYCODE);" onmspointerdown="simKeyDown(event, REVERSE_KEYCODE);"></div>
+            
+
+            <div id="fireButton"  class="fireButton" ontouchstart="touchDown(event);" ontouchend="touchUp(event);" onmspointerup="touchUp(event);" onmspointerdown="touchDown(event);"></div>
+            <div id="shieldsButton"  class="shieldsButton" ontouchstart="simKeyDown(event, SHIELDS_KEYCODE);" ontouchend="simKeyUp(event, SHIELDS_KEYCODE);" onmspointerup="simKeyUp(event, SHIELDS);" onmspointerdown="simKeyDown(event, SHIELDS);"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,32 @@
+ html, body, #wrapper {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+#wrapper {
+   position: relative;
+}
+
+#controls{
+    position:absolute;
+    width:100%; 
+    height:25px; 
+    top:0px;
+    background-color: white;
+    outline: none;  
+}
+
+#ScribbleView{
+    position:absolute;
+    left:0px;
+    right:0px;
+    top:25px; 
+    bottom: 0px;
+    background-color: #ffffff;
+    border-style:solid;
+    border-width:10px;
+    border-color:#ffffff
+}
