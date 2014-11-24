@@ -8,18 +8,10 @@
 
         <title>PureWeb&#174; HTML5 Asteroids App Sample</title>
 
-        <!-- START OF PRODUCTION REPLACE -->
-        <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
-        <script src="/HTML5/src/code/deps.js"></script>
-        <script src="/AsteroidsApp.js"></script>        
-        <script src="/pureweb.js"></script>
-        <script src="/bandwidth.js"></script>    
-		<link rel="stylesheet" href="/css/asteroidsapp.css"/>
-        <!-- END OF PRODUCTION REPLACE -->
-        
-        <!-- Define the optional logging configuration in an external script -->
-        <!--<script src="/logConfig.js"></script>-->
-        
+        <script src="/lib/pureweb/pureweb.min.js"></script> 
+        <!-- Include app specific code --> 
+        <script src="/AsteroidsApp.js"></script> 
+        <link rel="stylesheet" href="/css/asteroidsapp.css">              
     </head>
 
     <body onLoad="startAsteroids();">

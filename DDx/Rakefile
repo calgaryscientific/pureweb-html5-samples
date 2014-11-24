@@ -1,0 +1,13 @@
+PUREWEBHOME = ENV["PUREWEB_HOME"]
+
+desc "Deploy DDx HTML5 client"
+task :deploy do
+	sh("bower install")
+    FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
+	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
+	FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
+    FileUtils.cp_r("./DDxApp.html", "#{PUREWEBHOME}/nginx/clients/")
+    FileUtils.cp_r("./DDxApp.js", "#{PUREWEBHOME}/nginx/clients/")
+end

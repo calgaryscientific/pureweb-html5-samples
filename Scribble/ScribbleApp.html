@@ -6,14 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <title>PureWeb&#174; HTML5 Scribble App Sample</title>
         <script src="/lib/shake/shake.js"></script>
-        <!-- START OF PRODUCTION REPLACE -->
-        <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
-        <script src="/HTML5/src/code/deps.js"></script>
-        <script src="/ScribbleApp.js"></script>
-        <script src="/pureweb.js"></script>
-        <script src="/bandwidth.js"></script>
-        <link rel="stylesheet" href="/css/scribbleapp.css">
-        <!-- END OF PRODUCTION REPLACE -->
+        <script src="/lib/pureweb/pureweb.min.js"></script> 
+        <!-- Include app specific code --> 
+        <script src="/ScribbleApp.js"></script> 
+        <link rel="stylesheet" href="/css/scribbleapp.css"> 
+
     </head>
     <body onLoad="startScribble();">
         <!-- Start of diagnostics panel -->

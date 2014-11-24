@@ -1,0 +1,12 @@
+PUREWEBHOME = ENV["PUREWEB_HOME"]
+
+desc "Deploy Asteroids HTML5 client"
+task :deploy do
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/img")
+    FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
+    FileUtils.cp_r(Dir["img/*"], "#{PUREWEBHOME}/nginx/clients/img")
+    FileUtils.cp_r("./AsteroidsApp.html", "#{PUREWEBHOME}/nginx/clients/")
+    FileUtils.cp_r("./AsteroidsApp.js", "#{PUREWEBHOME}/nginx/clients/")
+end

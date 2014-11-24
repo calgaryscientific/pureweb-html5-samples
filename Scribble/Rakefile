@@ -1,0 +1,10 @@
+PUREWEBHOME = ENV["PUREWEB_HOME"]
+
+desc "Deploy Scribble HTML5 client"
+task :deploy do
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
+	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
+    FileUtils.cp_r("./ScribbleApp.html", "#{PUREWEBHOME}/nginx/clients/")
+    FileUtils.cp_r("./ScribbleApp.js", "#{PUREWEBHOME}/nginx/clients/")
+end
