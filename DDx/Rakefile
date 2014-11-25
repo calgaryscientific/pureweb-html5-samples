@@ -1,7 +1,7 @@
 PUREWEBHOME = ENV["PUREWEB_HOME"]
 PUREWEBLIBS = ENV["PUREWEB_LIBS"]
 
-PROJECT="Scribble"
+PROJECT="DDx"
 
 desc "Clean #{PROJECT}"
 task :clean do	
@@ -30,26 +30,16 @@ end
 
 desc "Stage #{PROJECT}"
 task :stage => [:setup] do	
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
-
-	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
-    FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
-    FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
-
-    FileUtils.cp_r("./DDxApp.html", "#{PUREWEBHOME}/nginx/clients/")    
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/#{PROJECT}")		
+	#Copy everything but the Rakefile
+	files = Dir.glob("*")
+	files.delete("Rakefile") 
+	FileUtils.cp_r(files, "#{PUREWEBHOME}/nginx/clients/#{PROJECT}/")		
 end
 
 desc "Stage clean #{PROJECT}"
 task :stageclean do
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/DDxApp.html", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/js/DDxApp.js", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/DDxApp.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/button.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/checkbox.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/slider.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/bower_components/closurelibrary", :force => true)
+	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/#{PROJECT}", :force => true)
 end
 
 desc "Build all the things for #{PROJECT}"
