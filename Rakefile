@@ -4,6 +4,8 @@ projects = {
     "Scribble" => "./Scribble"
 }
 
+PUREWEBHOME = ENV["PUREWEB_HOME"]
+
 PROJECT = "HTML5 Samples"
 
 task :clean do 
@@ -43,6 +45,7 @@ task :cleanall do
 	projects.each do |name, project|
 		sh("cd #{project} && rake stageclean")
 	end
+	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/lib/pureweb/", :force => true)	
 end
 
 task :all do

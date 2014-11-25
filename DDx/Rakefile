@@ -1,4 +1,6 @@
 PUREWEBHOME = ENV["PUREWEB_HOME"]
+PUREWEBLIBS = ENV["PUREWEB_LIBS"]
+
 PROJECT="Scribble"
 
 desc "Clean #{PROJECT}"
@@ -22,8 +24,7 @@ task :packageclean do
 end 
 
 desc "Stage #{PROJECT}"
-task :stage => [:setup] do
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
+task :stage => [:setup] do	
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
@@ -31,6 +32,9 @@ task :stage => [:setup] do
 	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
     FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
     FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
+
+	FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
+    FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.h264.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
 
     FileUtils.cp_r("./DDxApp.html", "#{PUREWEBHOME}/nginx/clients/")    
 end

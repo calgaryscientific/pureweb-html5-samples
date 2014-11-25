@@ -1,4 +1,6 @@
 PUREWEBHOME = ENV["PUREWEB_HOME"]
+PUREWEBLIBS = ENV["PUREWEB_LIBS"]
+
 PROJECT="Asteroids"
 
 desc "Clean #{PROJECT}"
@@ -16,16 +18,19 @@ task :packageclean do
 end 
 
 desc "Stage #{PROJECT}"
-task :stage do
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
+task :stage do	
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/img")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/lib/pureweb")
 
 	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
     FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
     FileUtils.cp_r(Dir["img/*"], "#{PUREWEBHOME}/nginx/clients/img")
 
+	FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
+    FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.h264.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
+   
     FileUtils.cp_r("./AsteroidsApp.html", "#{PUREWEBHOME}/nginx/clients/")    
 end
 
