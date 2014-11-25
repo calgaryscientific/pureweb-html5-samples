@@ -8,6 +8,24 @@ PUREWEBHOME = ENV["PUREWEB_HOME"]
 
 PROJECT = "HTML5 Samples"
 
+task :setup do
+	projects.each do |name, project|
+		sh("cd #{project} && rake setup")
+	end
+end
+
+task :install do	
+end
+
+task :build do
+end
+
+task :deploy do
+	projects.each do |name, project|
+		sh("cd #{project} && rake deploy")
+	end
+end
+
 task :clean do 
 	projects.each do |name, project|
 		sh("cd #{project} && rake clean")
@@ -44,8 +62,7 @@ task :cleanall do
 	end
 	projects.each do |name, project|
 		sh("cd #{project} && rake stageclean")
-	end
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/lib/pureweb/", :force => true)	
+	end	
 end
 
 task :all do

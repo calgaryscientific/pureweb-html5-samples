@@ -3,8 +3,17 @@ PUREWEBLIBS = ENV["PUREWEB_LIBS"]
 
 PROJECT="Asteroids"
 
+desc "Setup #{PROJECT}"
+task :setup do
+end
+
 desc "Clean #{PROJECT}"
 task :clean do	
+end
+
+desc "Deploy #{PROJECT}"
+task :deploy do
+	Rake::Task[:stage].invoke
 end
 
 desc "Package #{PROJECT}"
@@ -21,16 +30,12 @@ desc "Stage #{PROJECT}"
 task :stage do	
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/img")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/lib/pureweb")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/img")	
 
 	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
     FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
     FileUtils.cp_r(Dir["img/*"], "#{PUREWEBHOME}/nginx/clients/img")
-
-	FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
-    FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.h264.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
-   
+ 
     FileUtils.cp_r("./AsteroidsApp.html", "#{PUREWEBHOME}/nginx/clients/")    
 end
 
