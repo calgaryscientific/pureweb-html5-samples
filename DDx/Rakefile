@@ -35,6 +35,11 @@ task :stage => [:setup] do
 	files = Dir.glob("*")
 	files.delete("Rakefile") 
 	FileUtils.cp_r(files, "#{PUREWEBHOME}/nginx/clients/#{PROJECT}/")		
+
+	if File.exist?("#{PUREWEBLIBS}/HTML5/pureweb.min.js")
+		FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/#{PROJECT}/lib/pureweb")		
+		FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/.", "#{PUREWEBHOME}/nginx/clients/#{PROJECT}/lib/pureweb")	
+	end
 end
 
 desc "Stage clean #{PROJECT}"
