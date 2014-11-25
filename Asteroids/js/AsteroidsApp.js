@@ -12,15 +12,7 @@
 //a non blocking modal such as those provided by JQuery or Boostrap, or simply window.console.log().
 //For more information on this topic, please see the PureWeb release notes.
 
-//START OF PRODUCTION REPLACE
-goog.require('pureweb');
-goog.require('pureweb.client.Framework');
-goog.require('pureweb.client.WebClient');
-goog.require('pureweb.client.View');
-goog.require("pureweb.client.EncoderFormat");
-goog.require("pureweb.client.EncoderConfiguration");
-goog.require('pureweb.IllegalArgumentException');
-//END OF PRODUCTION REPLACE
+
 //Stores the collaboration URL when playing with another person
 var shareUrl = null;
 

@@ -5,15 +5,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <title>PureWeb&#174; HTML5 Scribble App Sample</title>
-        <script src="/lib/shake/shake.js"></script>
-        <!-- START OF PRODUCTION REPLACE -->
-        <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
-        <script src="/HTML5/src/code/deps.js"></script>
-        <script src="/ScribbleApp.js"></script>
-        <script src="/pureweb.js"></script>
-        <script src="/bandwidth.js"></script>
-        <link rel="stylesheet" href="/css/scribbleapp.css">
-        <!-- END OF PRODUCTION REPLACE -->
+        <script src="/bower_components/shake.js/shake.js"></script>
+        <script src="/lib/pureweb/pureweb.min.js"></script> 
+        <!-- Include app specific code --> 
+        <script src="/js/ScribbleApp.js"></script> 
+        <link rel="stylesheet" href="/css/ScribbleApp.css"> 
+
     </head>
     <body onLoad="startScribble();">
         <!-- Start of diagnostics panel -->

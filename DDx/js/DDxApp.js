@@ -35,6 +35,7 @@ purewebLogConfig = function() {
     };
 };
 
+ 
 /**
  * Map if encoder configuration objects for supported client formats, keyed by MimeType
  */
@@ -575,8 +576,8 @@ ddxclient.AnnotatedView = function(args) {
                             
                             //We check for the case in which we might have out of order 
                             //views coming across (PWEB-4532)
-                            if ((e.args.params_ !== null) && (typeof e.args.params_ !== 'undefined')){
-                                var counter = parseInt(e.args.params_.imagecounter);
+                            if ((e.event_.args.params_.imagecounter !== null) && (typeof e.event_.args.params_.imageCounter !== 'undefined')){
+                                var counter = parseInt(e.event.args.params_.imagecounter);
                                 console.log('decoded counter: ', counter, ' local counter: ', ddxclient.imageCounter);
                                 if (counter < ddxclient.imageCounter){
                                     alert('I need an adult! Images are coming in out of order!  Last image ' + ddxclient.imageCounter + ' current img: ' + counter);
