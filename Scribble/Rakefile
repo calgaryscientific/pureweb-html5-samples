@@ -3,6 +3,11 @@ PROJECT="Scribble"
 
 desc "Clean #{PROJECT}"
 task :clean do	
+	FileUtils.rm_r("bower_components", :force => true)
+end
+
+task :setup do
+	sh("bower install")
 end
 
 desc "Package #{PROJECT}"
@@ -16,13 +21,15 @@ task :packageclean do
 end 
 
 desc "Stage #{PROJECT}"
-task :stage do
+task :stage => [:setup] do
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
+	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
 	
 	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
     FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
+    FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
     
     FileUtils.cp_r("./ScribbleApp.html", "#{PUREWEBHOME}/nginx/clients/")    
 end
@@ -32,6 +39,7 @@ task :stageclean do
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/ScribbleApp.html", :force => true)
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/js/ScribbleApp.js", :force => true)
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/ScribbleApp.css", :force => true)
+	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/bower_components/shake.js", :force => true)
 end
 
 desc "Build all the things for #{PROJECT}"

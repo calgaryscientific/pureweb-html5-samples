@@ -43,7 +43,7 @@ task :stageclean do
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/button.css", :force => true)
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/checkbox.css", :force => true)
 	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/slider.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/bower_components", :force => true)
+	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/bower_components/closurelibrary", :force => true)
 end
 
 desc "Build all the things for #{PROJECT}"
