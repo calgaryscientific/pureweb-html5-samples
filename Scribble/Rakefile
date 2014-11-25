@@ -12,6 +12,11 @@ task :setup do
 	sh("bower install")
 end
 
+desc "Deploy #{PROJECT}"
+task :deploy do
+	Rake::Task[:stage].invoke
+end
+
 desc "Package #{PROJECT}"
 task :package do
 	puts "Need to implement PACKAGE for #{PROJECT}"
@@ -27,15 +32,11 @@ task :stage => [:setup] do
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
 	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/lib/pureweb")
 	
 	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
     FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
     FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
     
-    FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
-    FileUtils.cp_r("#{PUREWEBLIBS}/HTML5/pureweb.h264.min.js", "#{PUREWEBHOME}/nginx/clients/lib/pureweb")    
-
     FileUtils.cp_r("./ScribbleApp.html", "#{PUREWEBHOME}/nginx/clients/")    
 end
 
