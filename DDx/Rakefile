@@ -1,64 +1,68 @@
-PUREWEBHOME = ENV["PUREWEB_HOME"]
-PUREWEBLIBS = ENV["PUREWEB_LIBS"]
 
-PROJECT="Scribble"
+project="DDx"
+purewebhome=ENV["PUREWEB_HOME"]
 
-desc "Clean #{PROJECT}"
-task :clean do	
+desc "Clean #{project}"
+task :clean do
+    Dir.chdir(File.dirname(__FILE__))		
 	FileUtils.rm_r("bower_components", :force => true)
 end
 
-desc "Setup #{PROJECT}"
+desc "Setup #{project}"
 task :setup do
+	Dir.chdir(File.dirname(__FILE__))
 	sh("bower install")
 end
 
-desc "Deploy #{PROJECT}"
+desc "Deploy #{project}"
 task :deploy do
 	Rake::Task[:stage].invoke
 end
 
-desc "Package #{PROJECT}"
+desc "Package #{project}"
 task :package do
-	puts "Need to implement PACKAGE for #{PROJECT}"
+	puts "Need to implement PACKAGE for #{project}"
 end
 
-desc "Package clean #{PROJECT}"
+desc "Package clean #{project}"
 task :packageclean do
-	puts "Need to implement PACKAGECLEAN for #{PROJECT}"
+	puts "Need to implement PACKAGECLEAN for #{project}"
 end 
 
-desc "Stage #{PROJECT}"
+desc "Stage #{project}"
 task :stage => [:setup] do	
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/css")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/js")
-	FileUtils.mkdir_p("#{PUREWEBHOME}/nginx/clients/bower_components")
+	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/css")
+	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/js")
+	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/bower_components")
 
-	FileUtils.cp_r(Dir["css/*"], "#{PUREWEBHOME}/nginx/clients/css")
-    FileUtils.cp_r(Dir["js/*"], "#{PUREWEBHOME}/nginx/clients/js")
-    FileUtils.cp_r(Dir["bower_components/*"], "#{PUREWEBHOME}/nginx/clients/bower_components")
+	FileUtils.cp_r(Dir["css/*"], "#{purewebhome}/nginx/clients/css")
+    FileUtils.cp_r(Dir["js/*"], "#{purewebhome}/nginx/clients/js")
+    FileUtils.cp_r(Dir["bower_components/*"], "#{purewebhome}/nginx/clients/bower_components")
 
-    FileUtils.cp_r("./DDxApp.html", "#{PUREWEBHOME}/nginx/clients/")    
+    FileUtils.cp_r("./DDxApp.html", "#{purewebhome}/nginx/clients/")    
 end
 
-desc "Stage clean #{PROJECT}"
+desc "Stage clean #{project}"
 task :stageclean do
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/DDxApp.html", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/js/DDxApp.js", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/DDxApp.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/button.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/checkbox.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/css/slider.css", :force => true)
-	FileUtils.rm_r("#{PUREWEBHOME}/nginx/clients/bower_components/closurelibrary", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/DDxApp.html", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/js/DDxApp.js", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/DDxApp.css", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/button.css", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/checkbox.css", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/slider.css", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/bower_components/closurelibrary", :force => true)
 end
 
-desc "Build all the things for #{PROJECT}"
-task :all do
-	Rake::Task[:stageclean].invoke
-	Rake::Task[:stage].invoke
-	Rake::Task[:packageclean].invoke
-	Rake::Task[:package].invoke
+desc "Build all the things for #{project}"
+task :all do |t|
+	scope = t.scope.first || ''
+	scope = scope.length > 0 ? scope + ":" : scope
+	Rake::Task[scope+'stageclean'].invoke
+	Rake::Task[scope+'stage'].invoke
+	Rake::Task[scope+'packageclean'].invoke
+	Rake::Task[scope+'package'].invoke
 end
+
 
 task :default do
 	sh("rake -T")
