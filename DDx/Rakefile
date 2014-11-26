@@ -1,16 +1,15 @@
-
 project="DDx"
-purewebhome=ENV["PUREWEB_HOME"]
+
+purewebhome = ENV['PUREWEB_HOME']
+pureweblibs = ENV['PUREWEB_LIBS']
 
 desc "Clean #{project}"
-task :clean do
-    Dir.chdir(File.dirname(__FILE__))		
+task :clean do	
 	FileUtils.rm_r("bower_components", :force => true)
 end
 
 desc "Setup #{project}"
 task :setup do
-	Dir.chdir(File.dirname(__FILE__))
 	sh("bower install")
 end
 
@@ -31,26 +30,21 @@ end
 
 desc "Stage #{project}"
 task :stage => [:setup] do	
-	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/css")
-	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/js")
-	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/bower_components")
+	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/#{project}")		
+	#Copy everything but the Rakefile
+	files = Dir.glob("*")
+	files.delete("Rakefile") 
+	FileUtils.cp_r(files, "#{purewebhome}/nginx/clients/#{project}/")		
 
-	FileUtils.cp_r(Dir["css/*"], "#{purewebhome}/nginx/clients/css")
-    FileUtils.cp_r(Dir["js/*"], "#{purewebhome}/nginx/clients/js")
-    FileUtils.cp_r(Dir["bower_components/*"], "#{purewebhome}/nginx/clients/bower_components")
-
-    FileUtils.cp_r("./DDxApp.html", "#{purewebhome}/nginx/clients/")    
+	if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
+		FileUtils.mkdir_p("#{purewebhome}/nginx/clients/#{project}/lib/pureweb")		
+		FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/nginx/clients/#{project}/lib/pureweb")	
+	end
 end
 
 desc "Stage clean #{project}"
 task :stageclean do
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/DDxApp.html", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/js/DDxApp.js", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/DDxApp.css", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/button.css", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/checkbox.css", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/css/slider.css", :force => true)
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/bower_components/closurelibrary", :force => true)
+	FileUtils.rm_r("#{purewebhome}/nginx/clients/#{project}", :force => true)
 end
 
 desc "Build all the things for #{project}"
@@ -59,10 +53,9 @@ task :all do |t|
 	scope = scope.length > 0 ? scope + ":" : scope
 	Rake::Task[scope+'stageclean'].invoke
 	Rake::Task[scope+'stage'].invoke
-	Rake::Task[scope+'packageclean'].invoke
+	Rake::Task[scope+'packageclean'].invoke "release"
 	Rake::Task[scope+'package'].invoke
 end
-
 
 task :default do
 	sh("rake -T")

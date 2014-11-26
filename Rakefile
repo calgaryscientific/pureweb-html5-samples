@@ -73,3 +73,8 @@ end
 
 task :all do
 end
+
+task :default do
+	Dir.chdir(File.dirname(__FILE__))
+	sh("rake -T")
+end
