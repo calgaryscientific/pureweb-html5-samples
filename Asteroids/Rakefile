@@ -28,21 +28,21 @@ end
 
 desc "Stage #{project}"
 task :stage do	
-	FileUtils.mkdir_p("#{purewebhome}/nginx/clients/#{project}")		
+	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}")		
 	#Copy everything but the Rakefile
 	files = Dir.glob("*")
 	files.delete("Rakefile") 
-	FileUtils.cp_r(files, "#{purewebhome}/nginx/clients/#{project}/")	
+	FileUtils.cp_r(files, "#{purewebhome}/web/clients/#{project}/")	
 	
 	if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
-		FileUtils.mkdir_p("#{purewebhome}/nginx/clients/#{project}/lib/pureweb")		
-		FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/nginx/clients/#{project}/lib/pureweb")	
+		FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}/lib/pureweb")		
+		FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}/lib/pureweb")	
 	end
 end
 
 desc "Stage clean #{project}"
 task :stageclean do
-	FileUtils.rm_r("#{purewebhome}/nginx/clients/#{project}", :force => true)
+	FileUtils.rm_r("#{purewebhome}/web/clients/#{project}", :force => true)
 end
 
 desc "Build all the things for #{project}"
