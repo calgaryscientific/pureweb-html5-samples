@@ -13,12 +13,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>PureWeb DDxClient</title>
     
-    <script src="/HTML5/lib/closure-library/closure/goog/base.js"></script>
-    <script src="/HTML5/src/code/deps.js"></script>
-    <script src="/logConfig.js"></script>
-    <script src="/HTML5/src/code/pureweb/client.js"></script>
-
-    <script src="/js/DDxApp.js"></script>
+    <script src="./bower_components/closurelibrary/closure/goog/base.js"></script>
+    <script src="./bower_components/closurelibrary/closure/goog/deps.js"></script>
+    <script src="./lib/pureweb/pureweb.min.js"></script> 
+    <script src="./js/DDxApp.js"></script>
 
     <script>
         goog.require('goog.dom');
@@ -36,8 +34,7 @@
         goog.require('goog.debug.Logger.Level');
         goog.require('goog.debug.DivConsole');
         goog.require('goog.array');
-        goog.require('ddxclient');
-        goog.require('pureweb.client.diagnostics.DiagnosticsPanel');
+        goog.require('ddxclient');        
     </script>
 
     <link rel="stylesheet" href="/css/DDxApp.css"></link>
@@ -146,8 +143,6 @@
 <body>
 
     <!-- Start of diagnostics panel -->
-   <script src="/pureweb.js"></script>
-   <script src="/bandwidth.js"></script>
    <div id='pwDiagnosticsPanel'></div>
    <script>pureweb.client.diagnostics.initialize();</script>
     <!-- End of diagnostics panel -->
