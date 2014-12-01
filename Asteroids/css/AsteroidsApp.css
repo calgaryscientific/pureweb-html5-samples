@@ -68,7 +68,7 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/left.png');
+    background-image: url('../img/left.png');
     background-repeat: no-repeat;
 }
 
@@ -81,7 +81,7 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/right.png');
+    background-image: url('../img/right.png');
     background-repeat: no-repeat;
 }
 
@@ -94,7 +94,7 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/forward.png');
+    background-image: url('../img/forward.png');
     background-repeat: no-repeat;
 }
 
@@ -107,7 +107,7 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/reverse.png');
+    background-image: url('../img/reverse.png');
     background-repeat: no-repeat;
 }
 
@@ -120,7 +120,7 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/fire.png');
+    background-image: url('../img/fire.png');
     background-repeat: no-repeat;
 }
 
@@ -133,6 +133,6 @@ html, body {
     height:48px;
     opacity: 0.5;
     visibility:hidden;
-    background-image: url('/img/shields.png');
+    background-image: url('../img/shields.png');
     background-repeat: no-repeat;
 }

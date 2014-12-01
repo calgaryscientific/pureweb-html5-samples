@@ -257,7 +257,7 @@ function onLevelChanged(event){
     //Change the background
     if ((val !== null) && (val !== undefined)){
         level = val % 5;
-        var path = '/img/background' + level + '.jpg';
+        var path = './img/background' + level + '.jpg';
         document.getElementById('backgroundImg').src = path;
     }
 }
