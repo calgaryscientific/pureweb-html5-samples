@@ -160,11 +160,11 @@
         </div>
         <div id="ddxview_footer" style="position: absolute; bottom: 0px; height: 30px; vertical-align: middle; font-size: 12px; margin-left: 4px; vertical-align: middle;">
 
-            <div class="goog-inline-block">
+            <div style="display:inline-flex;">
                 Grid:
                 <input id="chkGridOn" type="checkbox" checked="true" onclick="ddxclient.gridOn_Click();">on</input>
             </div>
-            <div class="goog-inline-block" id="s-h" style="vertical-align: middle; margin-left:8px;">
+            <div id="s-h" style="vertical-align: middle; margin-left:8px; display:inline-flex;">
                 <div id="s1" class="goog-slider" style="width: 150px; height: 20px">
                     <!-- Add a horizontal line to the slider -->
                     <div style="position:absolute;
@@ -178,14 +178,14 @@
                 </div>
             </div>
 
-            <div class="goog-inline-block">
+            <div style="display:inline-flex;">
                 <span id="lblSpacing">spacing</span>
                 <span id="lblGridSpace" style="width:32px;">(0)</span>
                 <button id="btnClearMarkup" onclick="ddxclient.onClearMarkupClicked();">Clear Markup</button>
                 <button id="roundtripPingButton" onclick="ddxclient.doPing();">Roundtrip Ping</button>
-                <span id="roundtripPingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <span id="roundtripPingReport">? ms</span>
                 <button id="serviceServerPingButton" onclick="ddxclient.serviceServerPing();">Service-Server Ping</button>
-                <span id="serverServicePingReport" class="goog-inline-block" style="width:200px; ">? ms</span>
+                <span id="serverServicePingReport">? ms</span>
                 <input id="chkInputTransmissionEnabled" type="checkbox" checked="on" onClick="ddxclient.onInputTransmissionEnabledClicked();">inputTransmissionEnabled</input>
             </div>
 
