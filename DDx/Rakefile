@@ -29,7 +29,7 @@ task :packageclean do
 end 
 
 desc "Stage #{project}"
-task :stage => [:setup] do	
+task :stage do	
 	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}")		
 	#Copy everything but the Rakefile
 	files = Dir.glob("*")
