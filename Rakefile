@@ -33,7 +33,7 @@ task :clean do
 	end	
 end
 
-task :stage do
+task :stage => [:setup] do
 	
 	projects.each do |name, project|
 		sh("cd #{project} && rake stage")
@@ -71,7 +71,7 @@ task :cleanall do
 	end	
 end
 
-task :all do
+task :all => [:stage] do
 end
 
 task :default do	
