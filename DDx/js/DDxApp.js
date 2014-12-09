@@ -35,7 +35,7 @@ purewebLogConfig = function() {
     };
 };
 
- 
+
 /**
  * Map if encoder configuration objects for supported client formats, keyed by MimeType
  */
@@ -657,21 +657,26 @@ ddxclient.AnnotatedView.prototype.annotateView_ = function() {
     if (state !== null){
         var path = this.pathPrefix_ + '/MouseEvent';
         context.fillText('MouseEvent Type: ' + state.getValue(path + '/Type'), 5, fakedHeight + 4);
-        context.fillText('ChangedButton: ' + state.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * 2);
-        context.fillText('Buttons: ' + state.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * 3);
-        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 4);
-        context.fillText('X: ' + state.getValue(path + '/X') + ' Y: ' + state.getValue(path + '/Y'), 5, (fakedHeight + 4) * 5);
 
+        var voffset = 2;
+        context.fillText('ChangedButton: ' + state.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Buttons: ' + state.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('X: ' + state.getValue(path + '/X') + ' Y: ' + state.getValue(path + '/Y'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Delta: ' + state.getValue(path + '/Delta'), 5, (fakedHeight + 4) * voffset++);
+
+        voffset++;
         path = this.pathPrefix_ + '/KeyEvent';
-        context.fillText('KeyEvent Type: ' + state.getValue(path + '/Type'), 5, (fakedHeight + 4) * 7);
-        context.fillText('KeyCode: ' + state.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * 8);
-        context.fillText('CharacterCode: ' + state.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * 9);
-        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * 10);
+        context.fillText('KeyEvent Type: ' + state.getValue(path + '/Type'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('KeyCode: ' + state.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('CharacterCode: ' + state.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset);
     }
 
-    context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * 12);
-    context.fillText('Using ObjectURLs: ' + pureweb.getClient().supportsBinary(), 5, (fakedHeight + 4) * 13);
-    context.fillText('Using WebSockets: ' + pureweb.getClient().supportsWebsockets(), 5, (fakedHeight + 4) * 14);
+    voffset+=2;
+    context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * voffset++);
+    context.fillText('Using ObjectURLs: ' + pureweb.getClient().supportsBinary(), 5, (fakedHeight + 4) * voffset++);
+    context.fillText('Using WebSockets: ' + pureweb.getClient().supportsWebsockets(), 5, (fakedHeight + 4) * voffset++);
 
     if (this.getViewName() === 'PGView') {
         this.showMousePos_(this.lastX_, this.lastY_);
