@@ -69,6 +69,18 @@ function startAsteroids() {
     //progresses a level.
     pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
 
+    // setup sound value changed handlers
+    setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.wav');
+    setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.wav');
+    setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.wav');
+    setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.wav');
+    setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.wav');
+
+    setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.wav');
+    setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.wav');
+    setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.wav');
+    setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.wav');        
+
     //now connect
     pureweb.connect(location.href);
 }
@@ -294,4 +306,34 @@ function setupFPSCounter(asteroidsView) {
 
     //listen for view updated events
     pureweb.listen(asteroidsView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
+setupRepeatableClipPlayer = function(statePath, clipName) {
+    var clip = clipName;
+    var clipCount = 0;
+    var valueChangedHandler = function(event) {
+        var newClipCount = event.getNewValue();
+
+        while (clipCount < newClipCount) {
+            var audioClip = new Audio(clip);        
+            audioClip.play();
+            clipCount++;
+        }
+    }
+
+    pureweb.getFramework().getState().getStateManager().addValueChangedHandler(statePath, valueChangedHandler);
+}
+
+setupOnOffClipPlayer = function(statePath, clipName) {
+    var audioClip = new Audio(clipName); 
+    audioClip.loop = true;    
+    var valueChangedHandler = function(event) {
+        if (event.getNewValue() === 'true') {
+            audioClip.play();
+        } else {
+            audioClip.pause();     
+        }
+    }
+
+    pureweb.getFramework().getState().getStateManager().addValueChangedHandler(statePath, valueChangedHandler);
 }
