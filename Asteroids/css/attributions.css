@@ -1,0 +1,9 @@
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    right: 0px; /* Fix for Firefox */
+    overflow: hidden;
+    background-color: black;
+    color: white;
+}

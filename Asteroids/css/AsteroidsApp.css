@@ -46,6 +46,11 @@ html, body {
 	border:0;
 }
 
+#attributionsButton{
+    float:right;
+    border:0;
+}
+
 #pwDiagnosticsPanel{
     margin-top: 25px;
 }
