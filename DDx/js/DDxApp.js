@@ -58,7 +58,7 @@ ddxclient.appLoaded = function(e) {
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
 
-    pureweb.connect(location.href);
+    pureweb.connect(location.href, {username: "admin", password: "admin"});
 };
 
 /**

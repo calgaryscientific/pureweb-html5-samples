@@ -82,7 +82,7 @@ function startAsteroids() {
     setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.wav');        
 
     //now connect
-    pureweb.connect(location.href);
+    pureweb.connect(location.href, {username: "admin", password: "admin"});
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command

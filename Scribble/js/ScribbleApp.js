@@ -56,7 +56,7 @@ function startScribble() {
     pureweb.listen(framework, pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged);
     
     //everything is setup and ready to go - connect
-    pureweb.connect(location.href);
+    pureweb.connect(location.href, {username: "admin", password: "admin"});
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command
