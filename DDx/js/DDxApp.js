@@ -576,7 +576,8 @@ ddxclient.AnnotatedView = function(args) {
                             
                             //We check for the case in which we might have out of order 
                             //views coming across (PWEB-4532)
-                            if ((e.event_.args.params_.imagecounter !== null) && (typeof e.event_.args.params_.imageCounter !== 'undefined')){
+                            var evt = e.event_ || e;
+                            if ((evt.args.params_.imagecounter !== null) && (typeof evt.args.params_.imageCounter !== 'undefined')){
                                 var counter = parseInt(e.event.args.params_.imagecounter);
                                 console.log('decoded counter: ', counter, ' local counter: ', ddxclient.imageCounter);
                                 if (counter < ddxclient.imageCounter){
