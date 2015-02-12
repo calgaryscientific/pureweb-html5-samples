@@ -314,6 +314,8 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.ddxViews[3] = new ddxclient.AnnotatedView({id: 'ddxview3', 'viewName': '/DDx/View3'});
         ddxclient.pgView = new ddxclient.AnnotatedView({id: 'pgview', 'viewName': 'PGView'});
         ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
+        ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
+        ddxclient.cineController = ddxclient.ddxCineView.createCinematicController();
 
         ddxclient.ddxViews[0].setAcetateToolset(toolset);
         ddxclient.ddxViews[1].setAcetateToolset(toolset);
@@ -944,6 +946,75 @@ ddxclient.onClickDismissScreenshotDiv = function() {
     if (webClient.supportsRetrieveObject()) {
         window.URL.revokeObjectURL(goog.dom.getElement('screenshotImage').src);
     }
+};
+
+ddxclient.cineButtons = ['detachCinematic', 'rewind', 'playReverse', 'stepBack', 'pause', 'stepForward', 'playForward', 'fastForward'];
+
+ddxclient.autoPlayCine = function(e){
+    ddxclient.cineController.setAutoStart(e.checked);  
+};
+
+ddxclient.attachCinematic = function(){
+    console.log('Attaching cinematic view');    
+    ddxclient.cineController.attachCinematic(ddxclient.ddxCineView);    
+    var cid = ddxclient.cineController.getCinematicId();
+    var params = {'CinematicId': cid};
+    pureweb.getFramework().getClient().queueCommand('GenerateCine', params);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.FRAME_RECEIVED, ddxclient.enableControls);
+};
+
+ddxclient.enableControls = function(evt){    
+    ddxclient.cineButtons.forEach(function(entry){
+        var button = document.getElementById(entry);
+        button.disabled = false;
+    });
+};
+
+ddxclient.detachCinematic = function(){
+    console.log('Detaching cinematic view');
+    ddxclient.cineController.detachCinematic();    
+    pureweb.getFramework().getState().getStateManager().deleteTree(ddxclient.cineController.getCinePath());
+    ddxclient.cineButtons.forEach(function(entry){
+        var button = document.getElementById(entry);
+        button.disabled = true;
+    });
+    ddxclient.cineController = ddxclient.ddxCineView.createCinematicController(); 
+};
+
+ddxclient.rewind = function(){
+    ddxclient.cineController.rewind();
+};
+
+ddxclient.playReverse = function(){
+    ddxclient.cineController.playReverse();
+};
+
+ddxclient.stepBack = function(){
+    ddxclient.cineController.stepBack();
+};
+
+ddxclient.pause = function(){
+    ddxclient.cineController.pause();
+};
+
+ddxclient.stepForward = function(){
+    ddxclient.cineController.stepForward();
+};
+
+ddxclient.playForward = function(){
+    ddxclient.cineController.playForward();
+};
+
+ddxclient.fastForward = function(){
+    ddxclient.cineController.fastForward();
+};
+
+ddxclient.manualCineDeltaT = function(e){    
+    ddxclient.cineController.setDeltaTManual(e.checked);    
+};
+
+ddxclient.changeCineDeltaT = function(val){
+    ddxclient.cineController.setFrameDeltaT(val);
 };
 
 /**
