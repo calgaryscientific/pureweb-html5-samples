@@ -39,7 +39,7 @@ function startAsteroids() {
     }
 
     //Set to low quality JPEG for performance over quality
-    var encoderFormat = new pureweb.client.EncoderFormat('image/jpeg', 30, params);
+    var encoderFormat = new pureweb.client.EncoderFormat('video/h264', 30, params);
     
     var encoderConfig = new pureweb.client.EncoderConfiguration(encoderFormat, encoderFormat);
 
