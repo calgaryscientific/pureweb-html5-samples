@@ -258,7 +258,7 @@
 
     <div id="cine_tab" style="width: 100%; height: 100%;">
     <div id="cineview" class="purewebview" style="width: 100%; height: 100%; background-color:#ADADAD"></div>  
-		<div id="cineControls" style="position:absolute; bottom: 10px; left:10px; display:inline-flex;">
+		<div id="cineControls" style="position:absolute; bottom: 10px; left:10px; z-index: 10; background-color: #BBBBBB;">
         <span id="lblAutoPlay" >AutoPlay:</span>
         <input id="autoPlay" type="checkbox" onclick="ddxclient.autoPlayCine(this);"></input>       
         <button id="attachCinematic" onclick="ddxclient.attachCinematic();">Attach Cine</button>
@@ -270,11 +270,11 @@
         <button disabled id="stepForward" onclick="ddxclient.stepForward();">|&gt;</button>       
         <button disabled id="playForward" onclick="ddxclient.playForward();">&gt;&gt;</button>
         <button disabled id="fastForward" onclick="ddxclient.fastForward();">&gt;|</button>
-
+        <br/>
         <span id="lblManDeltaT">Manual DeltaT:</span>
         <input id="manualDeltaT" type="checkbox" onclick="ddxclient.manualCineDeltaT(this);"></input>
 
-        <div class="goog-inline-block" id="s-h" style="vertical-align: middle; margin-left:8px;">
+        <div class="goog-inline-block" id="s-h" style="display: inline-block; vertical-align: middle; margin-left:8px;">
             <div id="deltaT" class="goog-slider" style="width: 150px; height: 20px">
                 <!-- Add a horizontal line to the slider -->
                  <div style="position:absolute;
@@ -289,6 +289,14 @@
         </div>
         <span id="lblDeltaT">DeltaT</span>
         <span id="lblDeltaTVal" >(-)</span>
+        <span id="lblAutoAdjust">autoAdjust:</span>
+        <input id="autoAdjust" type="checkbox" onclick="ddxclient.autoAdjustCineTimer(this);"></input>
+        Measured Frame Rate: <span id="measuredFrameRate"></span> fps
+        <br/>
+        CineState: <span id="cineState"></span>
+        CinePlaybackState: <span id="cinePlaybackstate"></span>
+        Frames Fetched: <span id="cineFramesFetched"></span>
+
        </div>
     </div>
 
@@ -336,7 +344,7 @@
 
         var eld = document.getElementById('deltaT');
         sd = new goog.ui.Slider();
-        sd.setMinimum(17);
+        sd.setMinimum(10);
         sd.setMaximum(200);
         sd.setBlockIncrement(1);
         sd.setMoveToPointEnabled(true); //Better for touch UIs
@@ -344,7 +352,7 @@
         sd.decorate(eld);
         sd.addEventListener(goog.ui.Component.EventType.CHANGE, function() {
           var dv = sd.getValue();
-          var fps = (1000 / dv).toFixed(2);
+          var fps = (1000 / dv).toFixed(0);
           document.getElementById('lblDeltaTVal').innerHTML = '(' + sd.getValue() + ' ms / ' + fps + ' fps)';
           ddxclient.changeCineDeltaT(sd.getValue());
         });

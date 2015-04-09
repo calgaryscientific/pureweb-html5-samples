@@ -316,6 +316,23 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
         ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
         ddxclient.cineController = ddxclient.ddxCineView.createCinematicController();
+        pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PRESENTATION_FRAMES_PER_SECOND_CHANGED, function(e){
+            var span = document.getElementById('measuredFrameRate');
+            span.innerHTML = ddxclient.cineController.getPresentationFramesPerSecond();
+        });
+        pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PLAYBACK_STATE_CHANGED, function(e){
+            var span = document.getElementById('cinePlaybackstate');
+            span.innerHTML = ddxclient.cineController.getPlaybackState();
+        });
+        pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.STATE_CHANGED, function(e){
+            var span = document.getElementById('cineState');
+            span.innerHTML = ddxclient.cineController.getState();
+        });
+        var span = document.getElementById('cinePlaybackstate');
+        span.innerHTML = ddxclient.cineController.getPlaybackState();
+        span = document.getElementById('cineState');
+        span.innerHTML = ddxclient.cineController.getState();
+    
 
         ddxclient.ddxViews[0].setAcetateToolset(toolset);
         ddxclient.ddxViews[1].setAcetateToolset(toolset);
@@ -954,13 +971,61 @@ ddxclient.autoPlayCine = function(e){
     ddxclient.cineController.setAutoStart(e.checked);  
 };
 
+ddxclient.autoAdjustCineTimer = function(e){
+    ddxclient.cineController.setAutoAdjustDeltaT(e.checked);
+};
+
+ddxclient.updateFPS = function(){
+    var span = document.getElementById('measuredFrameRate');
+    span.innerHTML = Math.round(ddxclient.cineController.getPresentationFramesPerSecond());
+};
+
+ddxclient.updateState = function(){
+    span = document.getElementById('cineState');
+    span.innerHTML = ddxclient.cineController.getState();
+};
+
+ddxclient.updatePlaybackState = function(){
+    span = document.getElementById('cinePlaybackstate');
+    span.innerHTML = ddxclient.cineController.getPlaybackState();
+};
+
+ddxclient.updateFramesFetched = function(){
+    span = document.getElementById('cineFramesFetched');    
+    var fetched = ddxclient.cineController.getValidFrames().length;
+    span.innerHTML = '(' + fetched + ' / ' + ddxclient.maxFrames + ')'; 
+};
+
+ddxclient.updateMaxFrameCount = function(){
+    span = document.getElementById('cineFramesFetched');
+    ddxclient.maxFrames = ddxclient.cineController.getMaxFrameCount();
+    span.innerHTML = '(0 / ' + ddxclient.maxFrames + ')';
+};
+
+ddxclient.memoryAlert = function(){
+    var memory = ddxclient.cineController.getFrameDataSize();
+    console.log('Cine memory alert.  Current memory useage (in bytes): ' + memory);
+};
+
 ddxclient.attachCinematic = function(){
+    ddxclient.maxFrames = 0;    
     console.log('Attaching cinematic view');    
     ddxclient.cineController.attachCinematic(ddxclient.ddxCineView);    
     var cid = ddxclient.cineController.getCinematicId();
     var params = {'CinematicId': cid};
     pureweb.getFramework().getClient().queueCommand('GenerateCine', params);
+
     pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.FRAME_RECEIVED, ddxclient.enableControls);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PRESENTATION_FRAMES_PER_SECOND_CHANGED, ddxclient.updateFPS);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PLAYBACK_STATE_CHANGED, ddxclient.updatePlaybackState);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.FRAME_RECEIVED, ddxclient.updateFramesFetched);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.MAX_FRAME_COUNT_CHANGED, ddxclient.updateMaxFrameCount);
+    pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.MEMORY_WARNING, ddxclient.memoryAlert);    
+
+    var span = document.getElementById('cinePlaybackstate');
+    span.innerHTML = ddxclient.cineController.getPlaybackState();
+    span = document.getElementById('cineState');
+    span.innerHTML = ddxclient.cineController.getState();
 };
 
 ddxclient.enableControls = function(evt){    
@@ -971,6 +1036,14 @@ ddxclient.enableControls = function(evt){
 };
 
 ddxclient.detachCinematic = function(){
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.FRAME_RECEIVED, ddxclient.enableControls);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PRESENTATION_FRAMES_PER_SECOND_CHANGED, ddxclient.updateFPS);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PLAYBACK_STATE_CHANGED, ddxclient.updatePlaybackState);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.STATE_CHANGED, ddxclient.updateState);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.FRAME_RECEIVED, ddxclient.updateFramesFetched);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.MAX_FRAME_COUNT_CHANGED, ddxclient.updateMaxFrameCount);
+    pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.MEMORY_WARNING, ddxclient.memoryAlert);    
+    
     console.log('Detaching cinematic view');
     ddxclient.cineController.detachCinematic();    
     pureweb.getFramework().getState().getStateManager().deleteTree(ddxclient.cineController.getCinePath());
