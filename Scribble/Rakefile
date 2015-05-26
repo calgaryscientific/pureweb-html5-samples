@@ -3,6 +3,8 @@ project="Scribble"
 purewebhome = ENV['PUREWEB_HOME']
 pureweblibs = ENV['PUREWEB_LIBS']
 
+variations = ['Cs','Java','Cpp']
+
 desc "Clean #{project}"
 task :clean do	
 	FileUtils.rm_r("bower_components", :force => true)
@@ -30,21 +32,26 @@ end
 
 desc "Stage #{project}"
 task :stage => [:setup] do	
-	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}")		
-	#Copy everything but the Rakefile
-	files = Dir.glob("*")
-	files.delete("Rakefile") 
-	FileUtils.cp_r(files, "#{purewebhome}/web/clients/#{project}/")		
+	 variations.each do|lang| 	
+    	puts "#{purewebhome}/web/clients/#{project}#{lang}"
+    	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}")		
+	    #Copy everything but the Rakefile
+	    files = Dir.glob("*")
+	    files.delete("Rakefile") 
+	    FileUtils.cp_r(files, "#{purewebhome}/web/clients/#{project}#{lang}/")		
 
-	if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
-		FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}/lib/pureweb")		
-		FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}/lib/pureweb")	
+	    if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
+	    	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")		
+	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")	
+	    end
 	end
 end
 
 desc "Stage clean #{project}"
 task :stageclean do
-	FileUtils.rm_r("#{purewebhome}/web/clients/#{project}", :force => true)
+	variations.each do|lang| 
+		FileUtils.rm_r("#{purewebhome}/web/clients/#{project}#{lang}", :force => true)
+	end
 end
 
 desc "Build all the things for #{project}"
