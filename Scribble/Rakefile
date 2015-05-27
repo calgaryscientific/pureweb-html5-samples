@@ -3,7 +3,7 @@ project="Scribble"
 purewebhome = ENV['PUREWEB_HOME']
 pureweblibs = ENV['PUREWEB_LIBS']
 
-variations = ['Cs','Java','Cpp']
+variations = ['Cs','Java','Cpp','Qt']
 
 desc "Clean #{project}"
 task :clean do	
