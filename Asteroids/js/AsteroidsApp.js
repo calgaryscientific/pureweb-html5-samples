@@ -81,8 +81,14 @@ function startAsteroids() {
     setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.wav');
     setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.wav');        
 
-    //now connect
-    pureweb.connect(location.href, {username: "admin", password: "admin"});
+    //now connect	
+	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
+    if (collaborationToken) {
+        pureweb.joinSession(collaborationToken, "Scientific");   
+    }
+    else {
+        pureweb.connect(location.href, {username: "admin", password: "admin"});
+    }
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command

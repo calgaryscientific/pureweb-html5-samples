@@ -58,7 +58,14 @@ ddxclient.appLoaded = function(e) {
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
 
-    pureweb.connect(location.href, {username: "admin", password: "admin"});
+	//now connect	
+	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
+    if (collaborationToken) {
+        pureweb.joinSession(collaborationToken, "Scientific");   
+    }
+    else {
+        pureweb.connect(location.href, {username: "admin", password: "admin"});
+    }
 };
 
 /**
