@@ -1103,6 +1103,19 @@ ddxclient.changeCineDeltaT = function(val){
 ddxclient.createCustomRenderer = function(target) {
     var img = new Image();
     var revokeUrl = false;
+    var renderInProgress = false;
+    var pendingMimeType = null;
+    var pendingData = null;
+    var pendingParameters = null;
+    var dataUrl = '';
+    var dataUrlPrefix = '';
+    var context = null;     
+    var promises = [];
+
+    var resolver = function() {
+        var p = promises.pop();
+        if (p) p.resolve();
+    };
 
     var myPngRendererImplementation = {
         name: 'DDxPNGRenderer',
@@ -1110,9 +1123,27 @@ ddxclient.createCustomRenderer = function(target) {
             pureweb.getClient().logger.fine('Initialize my own renderer:' + renderer.toString());
         },
         renderBytes: function(mimeType, data, parameters, canvas, renderer) {
-            var dataArrayBuf;
-            var dataUrl = '';
-            var dataUrlPrefix = '';
+            if (renderInProgress) {
+                // We are currently rendering a frame, but have no pending data
+                if (goog.isNull(pendingMimeType)) {
+                    pendingMimeType = mimeType;
+                    pendingData = data;
+                    pendingParameters = parameters;
+                    return;
+                } else {
+                    // We are currently rendering a frame, but have pending data. Drop the frame.
+                    if (goog.isDefAndNotNull(parameters.promise_)) {
+                        parameters.promise_.resolve();
+                    }
+                    return;
+                }
+            }
+
+            promises.push(parameters.promise_);
+
+            renderInProgress = true;
+            dataUrl = '';
+            dataUrlPrefix = '';
 
             if (mimeType.indexOf(pureweb.SupportedEncoderMimeType.PNG)!==0) {
                 pureweb.getClient().logger.fine('Cannot render mimeType:' + mimeType + ' - I do PNGs only.');
@@ -1121,8 +1152,10 @@ ddxclient.createCustomRenderer = function(target) {
 
             img.onload = function() {
                 // guard against the (slight) possibility of out-of-sequence renders
+                renderInProgress = false;
 
                 if (!renderer.isActivated() && !renderer.isActivatingNextUpdate()) {
+                    resolver();
                     return;
                 }
 
@@ -1137,7 +1170,15 @@ ddxclient.createCustomRenderer = function(target) {
                 }
 
                 //Must be called after drawing if beginRendering was called
-                renderer.doneRendering(canvas);
+                renderer.doneRendering(canvas, parameters);
+                resolver();
+
+                 if (goog.isDefAndNotNull(pendingMimeType)) {                    
+                    renderer.renderBytes(pendingMimeType, pendingData, pendingParameters, canvas, renderer);
+                    pendingMimeType = null;
+                    pendingData = null;
+                    pendingParameters = null;
+                }        
             }
 
             //Render the PNG data
@@ -1146,8 +1187,8 @@ ddxclient.createCustomRenderer = function(target) {
                     window.URL.revokeObjectURL(img.src);
                     revokeUrl = false;
                 }
-                dataArrayBuf = /** @type {ArrayBuffer} */ data;
-                img.src = window.URL.createObjectURL(new Blob([new Uint8Array(dataArrayBuf)], {type: mimeType}));
+                
+                img.src = window.URL.createObjectURL(new Blob([data], {type: mimeType}));
                 revokeUrl = true;
             } else if (mimeType .indexOf('base64')>=0) {
                 dataUrlPrefix = 'data:' + mimeType + ',';
@@ -1155,8 +1196,8 @@ ddxclient.createCustomRenderer = function(target) {
                     dataUrl = dataUrlPrefix + data;
                 } else {
                     //Turn the data into characters
-                    dataArrayBuf = /** @type {ArrayBuffer} */ data;
-                    var bytes = new Uint8Array(dataArrayBuf);
+                    data = /** @type {ArrayBuffer} */ (data);
+                    var bytes = new Uint8Array(data);
                     for (var i=0; i<bytes.byteLength; i++) {
                         dataUrl += String.fromCharCode(bytes[i]);
                     }
@@ -1172,5 +1213,6 @@ ddxclient.createCustomRenderer = function(target) {
             pureweb.getClient().logger.fine('Clear my own renderer');
         }
     };
-    return pureweb.client.Framework.createViewRendererImplementation(target, myPngRendererImplementation);
+
+    return new pureweb.client.Framework.createViewRendererImplementation(target, myPngRendererImplementation);
 };
