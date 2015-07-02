@@ -55,6 +55,9 @@ ddxclient.appLoaded = function(e) {
                        pureweb.client.WebClient.EventType.STALLED_CHANGED,
                        ddxclient.stalledChanged_);
     goog.events.listen(pureweb.getClient(),
+                       pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED,
+                       ddxclient.onSessionStateChanged);    
+    goog.events.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
 
@@ -125,6 +128,7 @@ ddxclient.DDxEchoContent = 'Content';
 ddxclient.DDxEchoType = 'Type';
 ddxclient.DDxEchoKey = 'Key';
 ddxclient.imageCounter = 0;
+ddxclient.lastSessionState = null;
 
 ddxclient.runBabelTest = function(){
     ddxclient.resetBabelTest();
@@ -435,6 +439,19 @@ ddxclient.stalledChanged_ = function(e) {
     }
     alert('Application stalled. If situation does not resolve itself, refresh the page to restart.');
 };
+
+//Session state changed event handler - checks for the failed state.
+ddxclient.onSessionStateChanged = function(event) {
+    var sessionState = pureweb.getClient().getSessionState();
+    if (sessionState === pureweb.client.SessionState.FAILED) {
+        if (this.lastSessionState === pureweb.client.SessionState.CONNECTING) {
+            alert('Unable to connect to the DDx service application.');
+        } else {
+            alert('Connection to the DDx service application has been lost. Refresh the page to restart.');
+        }
+    }
+    this.lastSessionState = sessionState;
+}
 
 ddxclient.handleExceptionInHandler_ = function(e) {
     pureweb.getClient().logger.fine('Exception occured during execution of the multipart handler: ' + e.getEventArgs().getException());
