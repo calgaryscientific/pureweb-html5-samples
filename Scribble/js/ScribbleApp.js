@@ -61,7 +61,9 @@ function startScribble() {
         pureweb.joinSession(collaborationToken, "Scientific");   
     }
     else {
-        pureweb.connect(location.href, {username: "admin", password: "admin"});
+        var uri = location.protocol + '//' + location.hostname +  '/pureweb/app' + location.search;
+
+        pureweb.connect(uri, {username: "admin", password: "admin"});
     }
 }
 
