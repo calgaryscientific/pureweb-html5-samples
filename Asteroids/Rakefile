@@ -3,7 +3,7 @@ project="Asteroids"
 purewebhome = ENV['PUREWEB_HOME']
 pureweblibs = ENV['PUREWEB_LIBS']
 
-variations = ['Java']
+variations = ['Client']
 
 desc "Setup #{project}"
 task :setup do

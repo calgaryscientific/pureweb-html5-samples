@@ -3,7 +3,7 @@ project="DDx"
 purewebhome = ENV['PUREWEB_HOME']
 pureweblibs = ENV['PUREWEB_LIBS']
 
-variations = ['Cs','Java','Cpp']
+variations = ['Client']
 
 desc "Clean #{project}"
 task :clean do	
