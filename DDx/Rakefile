@@ -31,8 +31,8 @@ task :packageclean do
 end 
 
 desc "Stage #{project}"
-task :stage do
-    variations.each do|lang| 	
+task :stage => [:setup] do	
+	 variations.each do|lang| 	
     	puts "#{purewebhome}/web/clients/#{project}#{lang}"
     	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}")		
 	    #Copy everything but the Rakefile
@@ -42,9 +42,17 @@ task :stage do
 
 	    if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
 	    	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")		
-	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")	
-	    end
-	end
+	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")
+			
+			# Update index to prevent caching pureweb js between builds
+			src = File.read("#{purewebhome}/web/clients/#{project}#{lang}/index.html")
+			updated = src.gsub(/pureweb.min.js/, "pureweb.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
+			updated = updated.gsub(/pureweb.h264.min.js/, "pureweb.h264.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
+			
+			# To write changes to the file, use:
+			File.open("#{purewebhome}/web/clients/#{project}#{lang}/index.html", "w") {|file| file.puts updated }
+		end			 	
+    end
 end
 
 desc "Stage clean #{project}"
