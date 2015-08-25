@@ -9,7 +9,6 @@
         <title>PureWeb&#174; HTML5 Asteroids App Sample</title>
 
         <script src="./lib/pureweb/pureweb.min.js"></script>
-        <script src="./lib/pureweb/pureweb.h264.min.js"></script>
         <!-- Include app specific code --> 
         <script src="./js/AsteroidsApp.js"></script> 
         <link rel="stylesheet" href="./css/AsteroidsApp.css">              
@@ -43,5 +42,6 @@
             <div id="fireButton"  class="fireButton" ontouchstart="touchDown(event);" ontouchend="touchUp(event);" onmspointerup="touchUp(event);" onmspointerdown="touchDown(event);"></div>
             <div id="shieldsButton"  class="shieldsButton" ontouchstart="simKeyDown(event, SHIELDS_KEYCODE);" ontouchend="simKeyUp(event, SHIELDS_KEYCODE);" onmspointerup="simKeyUp(event, SHIELDS);" onmspointerdown="simKeyDown(event, SHIELDS);"></div>
         </div>
+        <script src="./lib/pureweb/pureweb.h264.min.js"></script>
     </body>
 </html>
