@@ -447,7 +447,12 @@ ddxclient.onSessionStateChanged = function(event) {
     var sessionState = pureweb.getClient().getSessionState();
     if (sessionState === pureweb.client.SessionState.FAILED) {
         if (this.lastSessionState === pureweb.client.SessionState.CONNECTING) {
-            alert('Unable to connect to the DDx service application.');
+            var msg = 'Unable to connect to the DDx service application.';
+            var ex = pureweb.getClient().getAcquireException();
+            if (goog.isDefAndNotNull(ex)) {
+                msg += ' ' + ex.getMessage();
+            }
+            alert(msg);
         } else {
             alert('Connection to the DDx service application has been lost. Refresh the page to restart.');
         }

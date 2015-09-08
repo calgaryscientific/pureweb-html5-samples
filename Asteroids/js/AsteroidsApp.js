@@ -59,8 +59,9 @@ function startAsteroids() {
         document.getElementById('shieldsButton').style.visibility='visible';
     }
 
-    //register event listener for connected changed to create the Asteroids View
+    //register event listener for connected changed to create the Asteroids View, and session state changed
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
+    pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);    
    
     //Attach the listeners for disconnection events.
     setDisconnectOnUnload(true);
@@ -123,10 +124,9 @@ function setDisconnectOnUnload(flag){
 //Connected changed event handler - creates the AsteroidsView View instance and completes initialization.
 function onConnectedChanged(e) {
     if (e.target.isConnected()) {
-        //register event listeners for connection stalled and session state failed events
+        //register event listeners for connection stalled
         var client = pureweb.getClient();
         pureweb.listen(client, pureweb.client.WebClient.EventType.STALLED_CHANGED, onStalledChanged);
-        pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);
 
         //Initialize Diagnostics panel if there is one
         var diagnosticsPanel = document.getElementById('pwDiagnosticsPanel');
@@ -154,7 +154,12 @@ function onSessionStateChanged(event) {
     if (sessionState === pureweb.client.SessionState.FAILED) {
         if (lastSessionState === pureweb.client.SessionState.CONNECTING) {
             //See note re: alert boxes at the top of the file
-            alert('Unable to connect to the Asteroids service application.');
+            var msg = 'Unable to connect to the Asteroids service application.';
+            var ex = pureweb.getClient().getAcquireException();
+            if (ex) {
+                msg += ' ' + ex.getMessage();
+            }
+            alert(msg);
         } else {
             //See note re: alert boxes at the top of the file            
             alert('Connection to the Asteroids service application has been lost. Refresh the page to restart.');

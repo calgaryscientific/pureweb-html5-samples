@@ -42,9 +42,9 @@ function startScribble() {
        
     var client = pureweb.getClient();
 
-    //register event listener for connected changed to create the Scribble View instance
+    //register event listeners for connected changed to create the Scribble View instance, and session state changes
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
-   
+    pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);   
   
     //initialize the color select, and add an app state changed handler for color changes
     initializeColorSelect();
@@ -98,10 +98,9 @@ function setDisconnectOnUnload(flag){
 //diagnostics panel (if it is present).
 function onConnectedChanged(e) {
     if (e.target.isConnected()) {
-        //register event listeners for connection stalled and session state failed events
+        //register event listeners for connection stalled
         var client = pureweb.getClient();
         pureweb.listen(client, pureweb.client.WebClient.EventType.STALLED_CHANGED, onStalledChanged);
-        pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);
 
         var diagnosticsPanel = document.getElementById('pwDiagnosticsPanel');
         if (diagnosticsPanel) {
@@ -126,7 +125,12 @@ function onSessionStateChanged(event) {
     if (sessionState === pureweb.client.SessionState.FAILED) {
         if (lastSessionState === pureweb.client.SessionState.CONNECTING) {
             //See note re: alert boxes at the top of the file
-            alert('Unable to connect to the Scribble service application.');
+            var msg = 'Unable to connect to the Scribble service application.';
+            var ex = pureweb.getClient().getAcquireException();
+            if (ex) {
+                msg += ' ' + ex.getMessage();
+            }
+            alert(msg);
         } else {
             //See note re: alert boxes at the top of the file
             alert('Connection to the Scribble service application has been lost. Refresh the page to restart.');
