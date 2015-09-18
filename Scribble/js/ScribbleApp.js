@@ -61,10 +61,37 @@ function startScribble() {
         pureweb.joinSession(collaborationToken, "Scientific");   
     }
     else {
-        var uri = location.protocol + '//' + location.hostname +  '/pureweb/app' + location.search;
+        var host = '';
+        var targetCluster = getParameterByName('targetCluster'); 
+        
+        if (targetCluster === ''){
+            if (location.port === '2001'){  
+                host = location.hostname; 
+            } else {
+                host = 'samples.platform.pureweb.io';
+            }
+        } else {
+            host = targetCluster;
+        }                        
+    
+        var qs = '';
+        if (location.search === ''){
+            qs = '?name=ScribbleCpp'
+        } else {
+            qs = location.search
+        }
+
+        var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
 
         pureweb.connect(uri, {username: "admin", password: "admin"});
     }
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 //This is important for tablets.  You typically want to have a PureWeb disconnection command
