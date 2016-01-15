@@ -93,6 +93,9 @@ ddxclient.appLoaded = function(e) {
     }
 };
 
+ddxclient.rotateViewBkColors = function() {
+    pureweb.getFramework().getClient().queueCommand('RotateDDxViewBkColors');
+};
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
