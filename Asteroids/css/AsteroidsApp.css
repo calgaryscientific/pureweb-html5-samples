@@ -37,13 +37,8 @@ html, body {
     right: 0px; /* Fix for Firefox */
 }
 
-#setNameButton{
-	border:0;
-}
-
 #shareButton{
 	float:right;
-	border:0;
 }
 
 #attributionsButton{
