@@ -37,10 +37,10 @@
         goog.require('ddxclient');        
     </script>
 
-    <link rel="stylesheet" href="./css/DDxApp.css"></link>
-    <link rel="stylesheet" href="./css/slider.css"></link>
-    <link rel="stylesheet" href="./css/checkbox.css"></link>
-    <link rel="stylesheet" href="./css/button.css"></link>
+    <link rel="stylesheet" href="./css/DDxApp.css">
+    <link rel="stylesheet" href="./css/slider.css">
+    <link rel="stylesheet" href="./css/checkbox.css">
+    <link rel="stylesheet" href="./css/button.css">
 
     <style>
         html, body {
@@ -308,7 +308,7 @@
         <div id="pwDiagnosticsBabelUTFDiv" style="width:100%; height: 230px; overflow-y:scroll; ">
             <table id='pwDiagnosticsBabelTable' style="width:100%">
                 <tr>
-                    <th style="width:25%">Language</th><th style="width:25%">Phrase</th><th style="width:25%">Command Response</th><th style="width:25%">App State</th>
+                    <th style="width:20%">Language</th><th style="width:20%">Phrase</th><th style="width:20%">Command Response</th><th style="width:20%">App State</th><th style="width:20%">Session Storage</th>
                 </tr>
             </table>
           </div>
@@ -316,7 +316,7 @@
          <div id="pwDiagnosticsBabelDataDiv" style="width:100%; height: 50%; overflow:auto;">
             <table id='pwDiagnosticsDataTypesTable' style="width:100%">
                 <tr>
-                    <th style="width:25%">Data Type</th><th style="width:25%">Data</th><th style="width:25%">Command Response</th><th style="width:25%">App State</th>
+                    <th style="width:20%">Data Type</th><th style="width:20%">Data</th><th style="width:20%">Command Response</th><th style="width:20%">App State</th><th style="width:20%">Session Storage</th>
                 </tr>
             </table>
          </div>
@@ -324,8 +324,21 @@
          <hr/>
         <button id='pwDiagnosticsBabelRunTest' onclick='ddxclient.runBabelTest();'>Run Tests</button>
         <button id='pwDiagnosticsBabelResetTest' onclick='ddxclient.resetBabelTest();'>Reset</button>
+        </div>
+        <div id="sessionstorage_tab" style="width: 100%; height: 100%;">
+           <div id="sessionstorage" class="purewebview" style="width: 100%; height: 100%; overflow:auto;">
+              Session Storage Contents:
+              <table id="sessionstoragetable" style="width:100%;">
+                <th>Key</th><th>Value</th><th>Service Listener</th><th>Remove K/V</th><th>Sessions with Key</th><th>getValue (local)</th>
+              
+              </table>
+              New Key: <input type="text" id="newStorageKeyTextField"> New Value: <input type="text" id="newStorageValueTextField">
+              <button id='addKeyToStorage' onclick='ddxclient.addKeyToStorage();'>Set Key</button>        
+              <button id='pwDSessionStorageBroadcast' onclick='ddxclient.sessionStorageBroadcast();'>Service Broadcast Key</button>
+              <button id='pwSessionStorageServiceKeys' onclick='ddxclient.queryServiceSessionStorageKeys();'>Query Service Keys</button>
+           </div>
 
-    </div>
+        </div>
 
     <script>
         var el = document.getElementById('s1');
@@ -367,6 +380,7 @@
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('aspectandownership_tab'), 'Aspect and Ownership'));
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('babel_tab'), 'Babel'));
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('cine_tab'), 'Cine'));
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('sessionstorage_tab'), 'SessionStorage'));
 
 
         function tabChanged(event) {

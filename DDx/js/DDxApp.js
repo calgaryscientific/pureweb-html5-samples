@@ -26,7 +26,7 @@ goog.require('pureweb.client.collaboration.PolylineTool');
 
 /**
  * Override default logging configuration
- **/
+
 purewebLogConfig = function() {
     return {
         'goog': pureweb.util.loggingLevel.CONFIG,
@@ -35,7 +35,7 @@ purewebLogConfig = function() {
     };
 };
 
-
+ **/
 /**
  * Map if encoder configuration objects for supported client formats, keyed by MimeType
  */
@@ -60,6 +60,9 @@ ddxclient.appLoaded = function(e) {
     goog.events.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
+    goog.events.listen(pureweb.getClient().getSessionStorage(),
+                        pureweb.client.SessionStorage.EventType.KEY_ADDED,
+                        ddxclient.storageKeyAdded);
 
 	//now connect	
 	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
@@ -150,7 +153,8 @@ ddxclient.babelPhrases = {
     'ko-KR':{type: 'text', data: '암호 다시 설정 실패'},
     'zh-CN':{type: 'text', data: '密码更改失败!'},
     'zh-TW':{type: 'text', data: '變更密碼失敗'},
-    'unicode-escape':{type: 'text', data: '\u0CA0_\u0CA0'}
+    'unicode-escape':{type: 'text', data: '\u0CA0_\u0CA0'},
+    'unicode-emoji':{type: 'text', data: '\ud83d\udc27\ud83d\ude3a\ud83d\ude06'}
 };
 
 ddxclient.DDxEcho = '/DDx/Echo/';
@@ -159,37 +163,62 @@ ddxclient.DDxEchoType = 'Type';
 ddxclient.DDxEchoKey = 'Key';
 ddxclient.imageCounter = 0;
 ddxclient.lastSessionState = null;
+ddxclient.babelTestInProgress = false;
+ddxclient.babelSessionStorageKeysPending = [];
 
 ddxclient.runBabelTest = function(){
-    ddxclient.resetBabelTest();
-    //Start testing
-    ddxclient.testBabel(ddxclient.babelPhrases);
-    ddxclient.testBabel(ddxclient.babelData);
+    if (!ddxclient.babelTestInProgress){
+        ddxclient.resetBabelTest();
+        //Start testing    
+        ddxclient.babelTestInProgress = true;
+        //Because we're attaching session storage listeners dyanmically, we need some indication of when the test is done
+        //otherwise the session storage table can get into a state (by hammering the test bable button) where it will not 
+        //reflect what is actually in session storage.
+        ddxclient.babelSessionStorageKeysPending = Object.keys(ddxclient.completeBabel); 
+        ddxclient.testBabel(ddxclient.babelPhrases);
+        ddxclient.testBabel(ddxclient.babelData);
+    }
 };
+
 
 ddxclient.testBabel = function(babelContent){
     for (var key in babelContent){
         if (babelContent.hasOwnProperty(key)){
             var path = ddxclient.DDxEcho + key;
 
+            // AppState
             pureweb.getFramework().getState().setValue(path, '---');
             ddxclient.setBabelCellState('pwDiagnosticsBableAppState_', key, undefined, 'Checking...');
             var dict = {};
             dict[ddxclient.DDxEchoKey] = key;
             dict[ddxclient.DDxEchoContent] = babelContent[key].data;
             dict[ddxclient.DDxEchoType] = babelContent[key].type;
-
+            
+            // Commands
             pureweb.getClient().queueCommand('Echo', dict, ddxclient.onEchoResponse);
             ddxclient.setBabelCellState('pwDiagnosticsBableCommand_', key, undefined, 'Checking...');
+
+            // Session Storage
+            pureweb.getClient().getSessionStorage().addValueChangedHandler(key, ddxclient.onEchoSessionStorageValueChanged);
+            pureweb.getClient().getSessionStorage().setValue(key, dict[ddxclient.DDxEchoContent]);
+            ddxclient.setBabelCellState('pwDiagnosticsBableSessionStorage_', key, undefined, 'Checking...');
         }
     }
 };
 
 ddxclient.resetBabelTest = function(){
+    // Clean app state
     pureweb.getFramework().getState().getStateManager().deleteTree(ddxclient.DDxEcho);
+
     for (var key in ddxclient.completeBabel){
+        //Clean session storage / de-register listeners.    
+        pureweb.getClient().getSessionStorage().removeAllValueChangedHandlers(key);
+        pureweb.getClient().getSessionStorage().removeValue(key); 
+        ddxclient.deleteSessionStorageTableRow(key)
+
         ddxclient.setBabelCellState('pwDiagnosticsBableAppState_', key, undefined, '');
         ddxclient.setBabelCellState('pwDiagnosticsBableCommand_', key, undefined, '');
+        ddxclient.setBabelCellState('pwDiagnosticsBableSessionStorage_', key, undefined, '');
     }
 };
 
@@ -213,6 +242,32 @@ ddxclient.onEchoStateChanged = function(args){
 
 };
 
+ddxclient.onEchoSessionStorageValueChanged = function(args){
+    var newContent = args.getNewValue();
+    var key = args.getKey();
+     
+    if (ddxclient.completeBabel[key].type === 'DateTime'){
+        newContent = pureweb.util.tryParse(newContent, Date);
+    }
+     
+    var same = ddxclient.same(newContent, ddxclient.completeBabel[key].data);
+ 
+    ddxclient.setBabelCellState('pwDiagnosticsBableSessionStorage_', key, same, newContent);
+};
+ 
+ddxclient.same = function(val1, val2){
+    var same = false;
+     //Because NaN !== NaN
+    if (isNaN(val1) && isNaN(val2)){
+        same = true;
+     }else{
+        if ((val1 !== null) && (val2 !== null)){
+            same = (val1.toString() === val2.toString());
+        }
+    }
+    return same;
+};
+
 ddxclient.checkLocaleData = function(babelContents, key, content, contentPath, checkCommandResponse, checkAppState){
     var newContent = null;
 
@@ -233,15 +288,7 @@ ddxclient.checkLocaleData = function(babelContents, key, content, contentPath, c
         newContent = pureweb.xml.XmlUtility.getTextAs({parent: content, childPath: contentPath}, Boolean);
     } 
 
-    var same = false;
-    //Because NaN !== NaN
-    if (isNaN(newContent) && isNaN(babelContents[key].data)){
-        same = true;
-    }else{
-        if (newContent !== null){
-            same = (babelContents[key].data.toString() === newContent.toString());
-        }
-    }
+    var same = ddxclient.same(newContent, babelContents[key].data);
 
     if(checkCommandResponse){
         ddxclient.setBabelCellState('pwDiagnosticsBableCommand_', key, same, newContent);
@@ -413,8 +460,6 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.populateBabelTable('pwDiagnosticsBabelTable', ddxclient.babelPhrases);
         ddxclient.populateBabelTable('pwDiagnosticsDataTypesTable', ddxclient.babelData);
 
-        //Clear the testing grid
-        ddxclient.resetBabelTest();
     }
 };
 
@@ -449,11 +494,18 @@ ddxclient.populateBabelTable = function(table, contents){
             newAppStateCellDiv.id = 'pwDiagnosticsBableAppState_' + key;
             newAppStateCell.appendChild(newAppStateCellDiv);
 
+            //Column for appstate response w/ internal div for results
+            var newSessStorageCell = document.createElement('td');
+            var newSessStorageCellDiv = document.createElement('div');
+            newSessStorageCellDiv.id = 'pwDiagnosticsBableSessionStorage_' + key;
+            newSessStorageCell.appendChild(newSessStorageCellDiv);
+
             //Add all cells to row
             newRow.appendChild(newLangCell);
             newRow.appendChild(newPhraseCell);
             newRow.appendChild(newCommandCell);
             newRow.appendChild(newAppStateCell);
+            newRow.appendChild(newSessStorageCell);
 
             //Add new row to table
             tab.appendChild(newRow);
@@ -1104,6 +1156,9 @@ ddxclient.detachCinematic = function(){
     pureweb.unlisten(ddxclient.cineController, pureweb.client.cine.CineController.EventType.MEMORY_WARNING, ddxclient.memoryAlert);    
     
     console.log('Detaching cinematic view');
+    var cid = ddxclient.cineController.getCinematicId();
+    var params = {'CinematicId': cid};
+    pureweb.getFramework().getClient().queueCommand('DestroyCine', params);
     ddxclient.cineController.detachCinematic();    
     pureweb.getFramework().getState().getStateManager().deleteTree(ddxclient.cineController.getCinePath());
     ddxclient.cineButtons.forEach(function(entry){
@@ -1148,6 +1203,153 @@ ddxclient.manualCineDeltaT = function(e){
 ddxclient.changeCineDeltaT = function(val){
     ddxclient.cineController.setFrameDeltaT(val);
 };
+
+
+ddxclient.locateSessionStorageTableRowIndex = function(key){
+    var storageTable = document.getElementById('sessionstoragetable');
+    var rows = storageTable.rows;
+    for (var i = 0; i < rows.length; i++){
+        var cells = rows[i].cells;
+        if (cells[0].textContent === key){
+            return i;            
+        }
+    }
+    return null;
+};
+
+ddxclient.deleteSessionStorageTableRow = function(key){
+    var index = ddxclient.locateSessionStorageTableRowIndex(key);
+    if (index !== null){
+        document.getElementById('sessionstoragetable').deleteRow(index);    
+    }    
+};
+
+ddxclient.changeSessionStorageTableRow = function(key, value){
+    var index = ddxclient.locateSessionStorageTableRowIndex(key);
+    if (index !== null){
+        var cells =  document.getElementById('sessionstoragetable').rows[index].cells;
+        cells[1].textContent = value;
+    }
+};
+
+ddxclient.genericStorageValueChangedHandler = function(evt){
+    var key = evt.getKey();
+    var value = evt.getNewValue();
+    if (evt.isDeletion()){
+        ddxclient.deleteSessionStorageTableRow(key);    
+    } else {
+        ddxclient.changeSessionStorageTableRow(key, value);    
+    }        
+};
+
+ddxclient.storageKeyAdded = function(evt){
+    var storageTable = document.getElementById('sessionstoragetable');
+
+    var keyCell = document.createElement('td');
+    var keyText = document.createTextNode(evt.args.getKey());
+    keyCell.appendChild(keyText);
+
+    var valueCell = document.createElement('td');    
+    var valueText = document.createTextNode(evt.args.getNewValue());
+    valueCell.appendChild(valueText);
+    
+    var serviceListenerButtonCell = document.createElement('td');
+    serviceListenerButtonCell.className = 'centerCell';
+    var serviceListenerButton = document.createElement('button');
+    serviceListenerButton.value = evt.args.getKey();
+    var serviceListenerButtonText = document.createTextNode('Off');    
+    serviceListenerButton.appendChild(serviceListenerButtonText);
+    serviceListenerButton.onclick = function(evt){
+        if (evt.target.innerHTML === 'Off'){
+            evt.target.innerHTML = 'On'
+            pureweb.getClient().queueCommand('AttachStorageListener', {key:evt.target.value});
+        } else {
+            evt.target.innerHTML = 'Off'
+            pureweb.getClient().queueCommand('DetachStorageListener', {key:evt.target.value});
+        }        
+    };
+    serviceListenerButtonCell.appendChild(serviceListenerButton);
+
+    var deleteButtonCell = document.createElement('td');    
+    deleteButtonCell.className = 'centerCell';
+    var deleteButton = document.createElement('button');
+    deleteButton.value = evt.args.getKey();
+    var deleteButtonText = document.createTextNode('X');    
+    deleteButton.appendChild(deleteButtonText);
+    deleteButton.onclick = function(evt){
+        var key = evt.target.value;
+        pureweb.getClient().queueCommand('DetachStorageListener', {key:key});
+        pureweb.getClient().getSessionStorage().removeAllValueChangedHandlers(key);
+        ddxclient.deleteSessionStorageTableRow(key);
+        pureweb.getClient().getSessionStorage().removeValue(key);
+    };
+    deleteButtonCell.appendChild(deleteButton);
+
+    var collaboratorButtonCell = document.createElement('td');
+    collaboratorButtonCell.className = 'centerCell';
+    var collaboratorButton = document.createElement('button');
+    collaboratorButton.value = evt.args.getKey();
+    var collaboratorButtonText = document.createTextNode('Query');    
+    collaboratorButton.appendChild(collaboratorButtonText);
+    collaboratorButton.onclick = function(evt){
+        pureweb.getClient().queueCommand('QuerySessionsWithKey', {key:evt.target.value}, function(sender, args){
+             alert(pureweb.xml.XmlUtility.getText({parent: args.getResponse(), childPath: 'guids'}));
+        });
+    };
+    collaboratorButtonCell.appendChild(collaboratorButton);
+
+    var getValueCell = document.createElement('td');
+    getValueCell.className = 'centerCell';
+    var getValue = document.createElement('button');
+    getValue.value = evt.args.getKey();
+    var getValueText = document.createTextNode('getValue');    
+    getValue.appendChild(getValueText);
+    getValue.onclick = function(evt){
+        alert(pureweb.getClient().getSessionStorage().getValue(evt.target.value));
+    };
+    getValueCell.appendChild(getValue);
+
+    var row = document.createElement('tr');
+    row.appendChild(keyCell);
+    row.appendChild(valueCell);
+    row.appendChild(serviceListenerButtonCell);
+    row.appendChild(deleteButtonCell);
+    row.appendChild(collaboratorButtonCell);
+    row.appendChild(getValueCell);
+
+    storageTable.appendChild(row);    
+    setTimeout(function(){pureweb.getClient().getSessionStorage().addValueChangedHandler(evt.args.getKey(), ddxclient.genericStorageValueChangedHandler)},0);
+    goog.array.binaryRemove(ddxclient.babelSessionStorageKeysPending, evt.args.getNewValue());
+    if (ddxclient.babelSessionStorageKeysPending.length === 0){
+        ddxclient.babelTestInProgress = false
+    }
+};
+
+ddxclient.queryServiceSessionStorageKeys = function(evt) {
+    pureweb.getClient().queueCommand('QuerySessionStorageKeys', null, function(sender, args){
+        alert(pureweb.xml.XmlUtility.getText({parent: args.getResponse(), childPath: 'keys'}));
+    });
+};
+
+ddxclient.addKeyToStorage = function(evt){
+    var key = document.getElementById('newStorageKeyTextField').value;
+    var value = document.getElementById('newStorageValueTextField').value;
+
+    if (key === ''){
+        alert('Keys must not be the empty string');
+        return;
+    }
+
+    pureweb.getClient().getSessionStorage().setValue(key, value);
+};
+
+ddxclient.sessionStorageBroadcast = function(evt){
+    var key = document.getElementById('newStorageKeyTextField').value;
+    var value = document.getElementById('newStorageValueTextField').value;
+
+    pureweb.getClient().queueCommand('SessionStorageBroadcast', {key: key, value: value});
+};
+
 
 /**
  * Create a custom renderer to render PNG image responses from the service
