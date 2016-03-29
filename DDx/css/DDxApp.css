@@ -69,6 +69,10 @@ label, input {
   color: #999;
 }
 
+.centerCell {
+  text-align: center;
+}
+
 #perf {
   position: absolute;
   right: 0;
