@@ -401,15 +401,15 @@
         tabPane.setSelectedIndex(0);
         goog.events.listen(window, 'load', ddxclient.appLoaded);
 
-        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+        pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                 ddxclient.onCollaborationStateInitialized);
 
-        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+        pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.SESSIONS_CHANGED,
                 ddxclient.onSessionsChanged);
 
-        goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+        pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.OWNER_SESSION_CHANGED,
                 ddxclient.onOwnerSessionChanged);
     </script>

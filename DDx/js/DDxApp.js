@@ -45,22 +45,22 @@ ddxclient.encoderConfigs = {};
  * Connect to the DDx service app.
  */
 ddxclient.appLoaded = function(e) {
-    goog.events.listen(pureweb.getFramework().getCollaborationManager(),
+    pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                        pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                        ddxclient.updateOwnerSession);
-    goog.events.listen(pureweb.getClient(),
+    pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.CONNECTED_CHANGED,
                        ddxclient.connectedChanged_);
-    goog.events.listen(pureweb.getClient(),
+    pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.STALLED_CHANGED,
                        ddxclient.stalledChanged_);
-    goog.events.listen(pureweb.getClient(),
+    pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED,
                        ddxclient.onSessionStateChanged);    
-    goog.events.listen(pureweb.getClient(),
+    pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
                        ddxclient.handleExceptionInHandler_);
-    goog.events.listen(pureweb.getClient().getSessionStorage(),
+    pureweb.listen(pureweb.getClient().getSessionStorage(),
                         pureweb.client.SessionStorage.EventType.KEY_ADDED,
                         ddxclient.storageKeyAdded);
 
