@@ -177,7 +177,8 @@ ddxclient.runBabelTest = function(){
         //Because we're attaching session storage listeners dyanmically, we need some indication of when the test is done
         //otherwise the session storage table can get into a state (by hammering the test bable button) where it will not 
         //reflect what is actually in session storage.
-        ddxclient.babelSessionStorageKeysPending = Object.keys(ddxclient.completeBabel); 
+        ddxclient.babelSessionStorageKeysPending = Object.keys(ddxclient.completeBabel);
+        goog.array.sort(ddxclient.babelSessionStorageKeysPending);
         ddxclient.testBabel(ddxclient.babelPhrases);
         ddxclient.testBabel(ddxclient.babelData);
     }
@@ -1322,7 +1323,7 @@ ddxclient.storageKeyAdded = function(evt){
 
     storageTable.appendChild(row);    
     setTimeout(function(){pureweb.getClient().getSessionStorage().addValueChangedHandler(evt.args.getKey(), ddxclient.genericStorageValueChangedHandler)},0);
-    goog.array.binaryRemove(ddxclient.babelSessionStorageKeysPending, evt.args.getNewValue());
+    goog.array.binaryRemove(ddxclient.babelSessionStorageKeysPending, evt.args.getKey());
     if (ddxclient.babelSessionStorageKeysPending.length === 0){
         ddxclient.babelTestInProgress = false
     }
