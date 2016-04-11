@@ -1347,6 +1347,41 @@ ddxclient.addKeyToStorage = function(evt){
     pureweb.getClient().getSessionStorage().setValue(key, value);
 };
 
+ddxclient.setKeyForceResponse = function(evt){
+    var key = document.getElementById('newStorageKeyTextField').value;
+    var value = document.getElementById('newStorageValueTextField').value;
+
+    if (key === ''){
+        alert('Keys must not be the empty string');
+        return;
+    }
+
+    var sessionStorage = pureweb.getClient().getSessionStorage();
+
+    if (!sessionStorage.containsKey(key)) {
+        alert('Key must refer to an existing session storage value');
+        return;
+    }
+
+    if (value !== sessionStorage.getValue(key)) {
+        alert('value must be the same as the current session storage value');
+        return;
+    }
+
+    // remove any existing forced response handler that may not have properly fired, and then add it again
+    pureweb.getClient().getSessionStorage().removeValueChangedHandler(key, ddxclient.forcedResponseStorageValueChangedHandler);
+    pureweb.getClient().getSessionStorage().addValueChangedHandler(key, ddxclient.forcedResponseStorageValueChangedHandler);
+
+    pureweb.getClient().queueCommand('SessionStorageSetKeyForceResponse', {key: key, value: value})
+};
+
+ddxclient.forcedResponseStorageValueChangedHandler = function(evt){
+    var key = evt.getKey();
+    var value = evt.getNewValue();
+    pureweb.getClient().getSessionStorage().removeValueChangedHandler(key, ddxclient.forcedResponseStorageValueChangedHandler);
+    alert('Got forced response for key=' + key + ', value=' + value);
+};
+
 ddxclient.sessionStorageBroadcast = function(evt){
     var key = document.getElementById('newStorageKeyTextField').value;
     var value = document.getElementById('newStorageValueTextField').value;
