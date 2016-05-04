@@ -95,7 +95,9 @@ function startAsteroids() {
             if (location.port === '2001'){  
                 host = location.hostname; 
             } else {
-                host = 'samples.platform.pureweb.io';
+                var re = /(.*)\.pureweb\.io/;
+                result = re.exec(location.hostname);
+                host = result[1] + '.platform.pureweb.io';
             }
         } else {
             host = targetCluster;
