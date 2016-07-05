@@ -112,7 +112,7 @@ function getParameterByName(name) {
 ddxclient.windowNumber = 0;
 ddxclient.addWindow = function() {
     var windowName = 'DDx Client ' + ddxclient.windowNumber;
-    pureweb.getFramework().createNewWindow(windowName, 'top=0,left=1,location=1,menubar=1,resizable=1,scrollbars=1,titlebar=1,toolbar=1', true);
+    pureweb.getFramework().createNewWindow('top=0,left=1,location=1,menubar=1,resizable=1,scrollbars=1,titlebar=1,toolbar=1', true);
     ddxclient.windowNumber++;
 };
 
