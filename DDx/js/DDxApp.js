@@ -44,7 +44,7 @@ ddxclient.encoderConfigs = {};
 /**
  * Connect to the DDx service app.
  */
-ddxclient.appLoaded = function(e) {
+ddxclient.attachListeners = function(e) {
     pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                        pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                        ddxclient.updateOwnerSession);
@@ -63,7 +63,10 @@ ddxclient.appLoaded = function(e) {
     pureweb.listen(pureweb.getClient().getSessionStorage(),
                         pureweb.client.SessionStorage.EventType.KEY_ADDED,
                         ddxclient.storageKeyAdded);
-
+};
+  
+ddxclient.connect = function() {
+    ddxclient.attachListeners();
 	//now connect	
 	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
     if (collaborationToken) {
