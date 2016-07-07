@@ -403,8 +403,6 @@
 
         goog.events.listen(tabPane, goog.ui.TabPane.Events.CHANGE, tabChanged);
         tabPane.setSelectedIndex(0);
-        goog.events.listen(window, 'load', ddxclient.appLoaded);
-
         pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                 ddxclient.onCollaborationStateInitialized);
