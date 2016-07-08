@@ -187,6 +187,8 @@
                 <button id="serviceServerPingButton" onclick="ddxclient.serviceServerPing();">Service-Server Ping</button>
                 <span id="serverServicePingReport">? ms</span>
                 <input id="chkInputTransmissionEnabled" type="checkbox" checked="on" onClick="ddxclient.onInputTransmissionEnabledClicked();">inputTransmissionEnabled</input>
+                 <button id="connectBttn" onclick="ddxclient.connect();" style="background-color:#66FF66">Connect</button>
+                <button id="disconnectBttn" onclick="ddxclient.disconnect();" style="background-color:#FF5050">Disconnect</button>
                 <button id="rotateViewBkColorsBttn" onclick="ddxclient.rotateViewBkColors();" style="background-color:#00FFFF">Rotate View Bk Colors</button>            
                 <button id="addWindowBttn" onclick="ddxclient.addWindow();" style="background-color:#0066FF">Add Window</button>    
             </div>
@@ -401,8 +403,6 @@
 
         goog.events.listen(tabPane, goog.ui.TabPane.Events.CHANGE, tabChanged);
         tabPane.setSelectedIndex(0);
-        goog.events.listen(window, 'load', ddxclient.appLoaded);
-
         pureweb.listen(pureweb.getFramework().getCollaborationManager(),
                 pureweb.client.CollaborationManager.EventType.IS_INITIALIZED_CHANGED,
                 ddxclient.onCollaborationStateInitialized);
