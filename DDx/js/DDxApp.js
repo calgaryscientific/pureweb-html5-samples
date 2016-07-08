@@ -101,6 +101,11 @@ ddxclient.connect = function() {
     }
 };
 
+ddxclient.disconnect = function() {
+    pureweb.disconnect()
+    location.reload();
+};
+
 ddxclient.rotateViewBkColors = function() {
     pureweb.getFramework().getClient().queueCommand('RotateDDxViewBkColors');
 };
