@@ -1,4 +1,7 @@
+require_relative("../../../Rakefile-init")
+
 project="DDx"
+name = "pureweb-sample-HTML5-client-#{project}"	
 
 purewebhome = ENV['PUREWEB_HOME']
 pureweblibs = ENV['PUREWEB_LIBS']
@@ -21,13 +24,25 @@ task :deploy do
 end
 
 desc "Package #{project}"
-task :package do
-	puts "Need to implement PACKAGE for #{project}"
+task :package => [:packageclean, :stage] do
+	if !Dir.exists?("#{purewebhome}/../pkg")
+		FileUtils.mkdir "#{purewebhome}/../pkg"
+	end
+	variations.each do|lang|						
+		if !Dir.glob("#{purewebhome}/web/clients/#{project}#{lang}/").empty?
+	        archive = OS.windows? ? "\"#{CSI_LIB}\\Tools\\7zip\\7z.exe\" a -tzip #{purewebhome}\\..\\pkg\\#{name}.zip #{purewebhome}/web/clients/#{project}#{lang}/*" :
+	                            "tar zcvf #{purewebhome}/../pkg/#{name}.tar.gz --directory=#{purewebhome}/web/clients/#{project}#{lang}/ ."                             	        
+	        sh(archive)
+	    end
+	end	
 end
 
 desc "Package clean #{project}"
-task :packageclean do
-	puts "Need to implement PACKAGECLEAN for #{project}"
+task :packageclean do	
+	if File.exists?("#{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}")
+		puts "deleting #{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}"
+		File.delete "#{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}"
+	end
 end 
 
 desc "Stage #{project}"

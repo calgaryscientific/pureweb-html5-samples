@@ -1,5 +1,5 @@
 {
-  "name": "Scribble",
+  "name": "scribble",
   "version": "0.0.0",
   "dependencies": {
     "shake.js": "*"
