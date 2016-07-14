@@ -71,6 +71,12 @@ task :cleanall do
 	end	
 end
 
+desc "Test #{project}"	
+task :test do    
+   	puts "Need to implement TEST for samples"
+end
+
+
 task :all => [:stage] do
 end
 
