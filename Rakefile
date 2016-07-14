@@ -73,7 +73,12 @@ end
 
 desc "Test #{project}"	
 task :test do    
-   	puts "Need to implement TEST for samples"
+   	puts "task: 'test' not implemented for samples"
+end
+
+desc "Test #{project}"	
+task :upload_to_s3 do    
+   	puts "task: 'upload_to_s3' not implemented for samples"
 end
 
 
