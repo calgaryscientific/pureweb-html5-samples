@@ -31,7 +31,7 @@ task :package => [:packageclean, :stage] do
 	variations.each do|lang|						
 		if !Dir.glob("#{purewebhome}/web/clients/#{project}#{lang}/").empty?
 	        archive = OS.windows? ? "\"#{CSI_LIB}\\Tools\\7zip\\7z.exe\" a -tzip #{purewebhome}\\..\\pkg\\#{name}.zip #{purewebhome}/web/clients/#{project}#{lang}/*" :
-	                            "tar zcvf #{purewebhome}/../pkg/#{name}.tar.gz --directory=#{purewebhome}/web/clients/#{project}#{lang}/ ."                             	        
+	                            "zip -rj #{purewebhome}/../pkg/#{name}.tar.gz #{purewebhome}/web/clients/#{project}#{lang}/"
 	        sh(archive)
 	    end
 	end	

@@ -87,14 +87,14 @@ task :upload_to_s3 do
 
 	projects.each do |name, project|        
 		filename = "pureweb-sample-HTML5-client-#{name}"
-		puts "looking for #{PUREWEB_HOME}/../pkg/#{filename}#{ARCHIVE_EXT}"
-	    if File.exists?("#{PUREWEB_HOME}/../pkg/#{filename}#{ARCHIVE_EXT}")
+		puts "looking for #{PUREWEB_HOME}/../pkg/#{filename}.zip"
+	    if File.exists?("#{PUREWEB_HOME}/../pkg/#{filename}.zip")
 
 	        #upload to the versioned directory
-	        sh("aws s3 cp #{PUREWEB_HOME}/../pkg/#{filename}#{ARCHIVE_EXT} s3://pureweb.io-binaries/continuous/samples/#{projectname}/#{version}/#{repo_source_description}/#{filename}#{ARCHIVE_EXT}")
+	        sh("aws s3 cp #{PUREWEB_HOME}/../pkg/#{filename}.zip s3://pureweb.io-binaries/continuous/samples/#{projectname}/#{version}/#{repo_source_description}/#{filename}.zip")
 
 	        #given that this should only ever be run from a build machine, we can assume that this build also represents the 'latest' build
-	        sh("aws s3 cp s3://pureweb.io-binaries/continuous/samples/#{projectname}/#{version}/#{repo_source_description}/#{filename}#{ARCHIVE_EXT} s3://pureweb.io-binaries/continuous/samples/#{projectname}/latest/#{filename}#{ARCHIVE_EXT}")
+	        sh("aws s3 cp s3://pureweb.io-binaries/continuous/samples/#{projectname}/#{version}/#{repo_source_description}/#{filename}.zip s3://pureweb.io-binaries/continuous/samples/#{projectname}/latest/#{filename}.zip")
 	    else
 	        puts("No file found.  Skipping upload.")
 	    end
