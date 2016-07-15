@@ -31,7 +31,7 @@ task :package => [:packageclean, :stage] do
 	variations.each do|lang|						
 		if !Dir.glob("#{purewebhome}/web/clients/#{project}#{lang}/").empty?
 	        archive = OS.windows? ? "\"#{CSI_LIB}\\Tools\\7zip\\7z.exe\" a -tzip #{purewebhome}\\..\\pkg\\#{name}.zip #{purewebhome}/web/clients/#{project}#{lang}/*" :
-	                            "zip -rj #{purewebhome}/../pkg/#{name}.zip #{purewebhome}/web/clients/#{project}#{lang}/"
+	                             "cd #{purewebhome}/web/clients/#{project}#{lang} && zip -r #{purewebhome}/../pkg/#{name}.zip ./*"
 	        sh(archive)
 	    end
 	end	
@@ -39,9 +39,9 @@ end
 
 desc "Package clean #{project}"
 task :packageclean do	
-	if File.exists?("#{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}")
-		puts "deleting #{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}"
-		File.delete "#{purewebhome}/../pkg/#{name}#{ARCHIVE_EXT}"
+	if File.exists?("#{purewebhome}/../pkg/#{name}.zip")
+		puts "deleting #{purewebhome}/../pkg/#{name}.zip"
+		File.delete "#{purewebhome}/../pkg/#{name}.zip"
 	end
 end 
 
