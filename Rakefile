@@ -78,7 +78,7 @@ task :test do
    	puts "task: 'test' not implemented for samples"
 end
 
-desc "Test #{project}"	
+desc "Upload to S3 #{project}"	
 task :upload_to_s3 do    
    	projectname = File.basename(File.dirname(__FILE__))
     repo_source_description = `git describe --long`.strip().match(/^(?<version>.*?)(-(?<variant>.*?))?-(?<revision>.*?)-(?<hash>.*?)$/)
