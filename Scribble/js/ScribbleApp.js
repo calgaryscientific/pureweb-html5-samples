@@ -86,6 +86,11 @@ function startScribble() {
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
 
         pureweb.connect(uri, {username: "admin", password: "admin"});
+
+         // for test of identity connect
+        client.setTestAuthCredentials('666822c4-c87d-474e-a548-18770a580ac0',
+            '47e6e5d96d8e83203ad52c47b6f43803ac520eb72776306c7eeb628337aacfa33bd09852580d36ccb21b26bbca59533d25267575b227f490f1e8ea01b6602f79');
+        pureweb.getClient().connectWithToken(uri);
     }
 }
 
