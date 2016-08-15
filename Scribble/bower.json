@@ -2,8 +2,7 @@
   "name": "scribble",
   "version": "0.0.0",
   "dependencies": {
-    "shake.js": "*",
-	"libsodium.js" : "*"
+    "shake.js": "*"
   },
   "appPath": "app"
 }
