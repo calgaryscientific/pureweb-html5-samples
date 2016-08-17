@@ -77,7 +77,7 @@ ddxclient.connect = function() {
         var targetCluster = getParameterByName('targetCluster'); 
         
         if (targetCluster === ''){
-            if (location.port === '2001'){  
+            if (location.port === '2001' || location.port === '2002'){  
                 host = location.hostname; 
             } else {
                 var re = /(.*)\.pureweb\.io/;
