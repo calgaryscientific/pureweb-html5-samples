@@ -254,6 +254,25 @@
                 </div>
             </div>
         </div>
+        <div>
+          <div class="goog-inline-block label-column">
+            <span>Share Url:</span>
+          </div>
+          <div class="goog-inline-block field-column">
+            <input id="shareUri" type="text" style="width: 100%"/>
+          </div>
+          <div class="goog-inline-block label-column">
+            <span>Share Password:</span>
+          </div>
+          <div class="goog-inline-block field-column">
+            <input id="sharePassword" type="password" style="width: 100%"/>
+          
+            <div>
+              <button id="btnJoinSession" style="width: 120px;" onClick="ddxclient.onJoinShare();">Join Session</button>
+            </div>
+          </div>
+        </div>
+
         <div id="participantsPanel" style="padding: 8px;">
             <span><b>Participants</b></span>
             <div id="lstParticipants" style="width: 100%; height: 320px; border: 1px solid gray;"></div>
@@ -345,6 +364,42 @@
 
         </div>
 
+        <div id="windowmessaging_tab" style="width: 100%; height: 100%;">
+         <div id="windowmessenging" style="padding: 10px; width: 100%; height: 100%; overflow:auto;">
+            <div class="goog-inline-block label-column">
+                <span>This window's name: </span>
+            </div>
+            <div class="goog-inline-block field-column" id="windowName">
+            </div>
+            <div class="goog-inline-block label-column">
+                <span>To Window: </span>
+            </div>
+            <div class="goog-inline-block field-column">
+                <select id="ddlAllWindows" onfocus='ddxclient.populateWindowList()'>
+                    <option>All Available Windows</option>
+                </select>
+            </div>
+            <div class="goog-inline-block label-column">
+                <span>Message: </span>
+            </div>
+            <div class="goog-inline-block field-column">
+                <input id="txtWindowMessage" type="text" style="width: 100%"/>
+            </div>
+            <div class="goog-inline-block label-column" ></div>
+            <div class="goog-inline-block field-column">
+                <button id='sendMessageToWindow' onclick='ddxclient.sendWindowMessage();'>Send Message</button>
+            </div>
+            <div class="goog-inline-block label-column"></div>
+            <div class="goog-inline-block field-column">
+                    <div id="msgInbox" style="padding: 10px;">
+                        <span><b>Inbox</b></span>
+                        <textarea id="txtInbox" style="width: 100%; white-space: pre-wrap; height: 100px; border: 1px solid gray;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     <script>
         var el = document.getElementById('s1');
         var s = new goog.ui.Slider();
@@ -386,7 +441,7 @@
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('babel_tab'), 'Babel'));
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('cine_tab'), 'Cine'));
         tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('sessionstorage_tab'), 'SessionStorage'));
-
+        tabPane.addPage(new goog.ui.TabPane.TabPage(document.getElementById('windowmessaging_tab'), 'WindowMessenger'));
 
         function tabChanged(event) {
             var index = event.currentTarget.getSelectedIndex();
@@ -398,7 +453,9 @@
                 ddxclient.ddxOwnershipView.resize();
             } else if (index === 5) {
                 ddxclient.ddxCineView.resize();
-            }            
+            } else if (index === 7) {
+                document.getElementById('windowName').innerHTML = window.name;                
+            }          
         };
 
         goog.events.listen(tabPane, goog.ui.TabPane.Events.CHANGE, tabChanged);
