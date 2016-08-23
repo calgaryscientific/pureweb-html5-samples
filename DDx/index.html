@@ -254,24 +254,6 @@
                 </div>
             </div>
         </div>
-        <div>
-          <div class="goog-inline-block label-column">
-            <span>Share Url:</span>
-          </div>
-          <div class="goog-inline-block field-column">
-            <input id="shareUri" type="text" style="width: 100%"/>
-          </div>
-          <div class="goog-inline-block label-column">
-            <span>Share Password:</span>
-          </div>
-          <div class="goog-inline-block field-column">
-            <input id="sharePassword" type="password" style="width: 100%"/>
-          
-            <div>
-              <button id="btnJoinSession" style="width: 120px;" onClick="ddxclient.onJoinShare();">Join Session</button>
-            </div>
-          </div>
-        </div>
 
         <div id="participantsPanel" style="padding: 8px;">
             <span><b>Participants</b></span>
@@ -365,24 +347,18 @@
         </div>
 
         <div id="windowmessaging_tab" style="width: 100%; height: 100%;">
-         <div id="windowmessenging" style="padding: 10px; width: 100%; height: 100%; overflow:auto;">
-            <div class="goog-inline-block label-column">
-                <span>This window's name: </span>
+         <div id="windowmessenging" style="padding: 10px; width: 100%; height: 100%">
+            <span><b>This window's name: </b></span>
+            <div class="goog-inline-block field-column" style="padding-bottom: 10px" style="padding-bottom: 10px" id="windowName">
             </div>
-            <div class="goog-inline-block field-column" id="windowName">
-            </div>
-            <div class="goog-inline-block label-column">
-                <span>To Window: </span>
-            </div>
-            <div class="goog-inline-block field-column">
+            <span><b>To Window: </b></span>
+            <div class="goog-inline-block field-column" style="padding-bottom: 10px">
                 <select id="ddlAllWindows" onfocus='ddxclient.populateWindowList()'>
                     <option>All Available Windows</option>
                 </select>
             </div>
-            <div class="goog-inline-block label-column">
-                <span>Message: </span>
-            </div>
-            <div class="goog-inline-block field-column">
+            <span><b>Message: </b></span>
+            <div class="goog-inline-block field-column" style="padding-bottom: 10px">
                 <input id="txtWindowMessage" type="text" style="width: 100%"/>
             </div>
             <div class="goog-inline-block label-column" ></div>

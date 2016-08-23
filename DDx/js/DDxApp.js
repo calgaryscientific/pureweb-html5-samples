@@ -578,10 +578,10 @@ ddxclient.getMultiWindowTimers = function(){
     // get tmiers
     var multiWindowTimers;
     var win = pureweb.getClient().getMultiWindow();
-    if(win.isParentWindow() || !goog.isDefAndNotNull(window.opener))
-        multiWindowTimers = win.multiWindowConnectionTimers_;
-    else{
+    if(win.isChildWindow())
         multiWindowTimers = window.opener.pureweb.getClient().getMultiWindow().multiWindowConnectionTimers_;
+    else{
+        multiWindowTimers = win.multiWindowConnectionTimers_;
     }
     return multiWindowTimers;
 }
