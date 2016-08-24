@@ -61,9 +61,6 @@ ddxclient.attachListeners = function(e) {
                        pureweb.client.MultiWindow.EventType.CHILD_WINDOW_CLOSED,
                        ddxclient.onChildWindowClosed_);    
     pureweb.listen(pureweb.getClient(),
-                       pureweb.client.WebClient.EventType.MULTIPART_HANDLER_EXCEPTION_OCCURRED,
-                       ddxclient.handleExceptionInHandler_);
-    pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED,
                        ddxclient.onSessionStateChanged);    
     pureweb.listen(pureweb.getClient(),
