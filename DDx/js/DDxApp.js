@@ -54,6 +54,12 @@ ddxclient.attachListeners = function(e) {
     pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.STALLED_CHANGED,
                        ddxclient.stalledChanged_);
+    pureweb.listen(pureweb.getClient().getMultiWindow(),
+                       pureweb.client.MultiWindow.EventType.MULTI_WINDOW_MESSAGE,
+                       ddxclient.onMultiWindowMessage_);
+    pureweb.listen(pureweb.getClient().getMultiWindow(),
+                       pureweb.client.MultiWindow.EventType.CHILD_WINDOW_CLOSED,
+                       ddxclient.onChildWindowClosed_);    
     pureweb.listen(pureweb.getClient(),
                        pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED,
                        ddxclient.onSessionStateChanged);    
@@ -106,6 +112,10 @@ ddxclient.disconnect = function() {
     location.reload();
 };
 
+ddxclient.addWindow = function() {
+    pureweb.getFramework().createNewWindow('top=1,left=1,location=1,menubar=1,resizable=1,scrollbars=1,titlebar=1,toolbar=1', true);
+};
+
 ddxclient.rotateViewBkColors = function() {
     pureweb.getFramework().getClient().queueCommand('RotateDDxViewBkColors');
 };
@@ -129,6 +139,11 @@ ddxclient.addWindow = function() {
  * Data types for testing babel
  */
 ddxclient.babelData = {
+        'DateTime-Regular': { type : 'DateTime', data : new Date(2000, 1, 2)},
+        'DateTime-StandardTime' : { type : 'DateTime', data : new Date(2009, 3, 8, 1, 30, 0)},
+        'DateTime-DSTInvalidTime' : { type : 'DateTime', data : new Date(2009, 3, 8, 3, 0, 0)},
+        'DateTime-DST' : { type : 'DateTime', data : new Date(2009, 3, 8, 3, 0, 0)},
+        'DateTime-DST-ST-AmbiguousTime' : { type : 'DateTime', data : new Date(2009, 11, 1, 1, 30, 0)},
         'Character' : {type : 'Character', data : 'c'},
         'Integer-Positive': { type : 'Integer', data : 1234567890},
         'Integer-Negative': { type : 'Integer', data : -1234567890},
@@ -213,7 +228,11 @@ ddxclient.testBabel = function(babelContent){
             ddxclient.setBabelCellState('pwDiagnosticsBableAppState_', key, undefined, 'Checking...');
             var dict = {};
             dict[ddxclient.DDxEchoKey] = key;
-            dict[ddxclient.DDxEchoContent] = babelContent[key].data;
+            if (babelContent[key].type === 'DateTime'){
+                dict[ddxclient.DDxEchoContent] =  pureweb.util.getPureWebDateString(babelContent[key].data);
+            }else{
+                dict[ddxclient.DDxEchoContent] = babelContent[key].data;
+            }
             dict[ddxclient.DDxEchoType] = babelContent[key].type;
             
             // Commands
@@ -236,7 +255,7 @@ ddxclient.resetBabelTest = function(){
         //Clean session storage / de-register listeners.    
         pureweb.getClient().getSessionStorage().removeAllValueChangedHandlers(key);
         pureweb.getClient().getSessionStorage().removeValue(key); 
-        ddxclient.deleteSessionStorageTableRow(key)
+        ddxclient.deleteSessionStorageTableRow(key);
 
         ddxclient.setBabelCellState('pwDiagnosticsBableAppState_', key, undefined, '');
         ddxclient.setBabelCellState('pwDiagnosticsBableCommand_', key, undefined, '');
@@ -308,6 +327,8 @@ ddxclient.checkLocaleData = function(babelContents, key, content, contentPath, c
         newContent = newContent.toExponential(7);
     } else if (babelContents[key].type === 'Boolean'){
         newContent = pureweb.xml.XmlUtility.getTextAs({parent: content, childPath: contentPath}, Boolean);
+    } else if (babelContents[key].type === 'DateTime'){
+        newContent = pureweb.xml.XmlUtility.getTextAs({parent: content, childPath: contentPath}, Date);
     } 
 
     var same = ddxclient.same(newContent, babelContents[key].data);
@@ -543,6 +564,88 @@ ddxclient.stalledChanged_ = function(e) {
     }
     alert('Application stalled. If situation does not resolve itself, refresh the page to restart.');
 };
+
+ddxclient.removeOldOptions = function(ddlAllWindows){
+    while (ddlAllWindows.options.length) {
+        ddlAllWindows.remove(0);
+    }
+}
+
+ddxclient.getMultiWindowTimers = function(){
+    // get tmiers
+    var multiWindowTimers;
+    var win = pureweb.getClient().getMultiWindow();
+    if(win.isChildWindow())
+        multiWindowTimers = window.opener.pureweb.getClient().getMultiWindow().multiWindowConnectionTimers_;
+    else{
+        multiWindowTimers = win.multiWindowConnectionTimers_;
+    }
+    return multiWindowTimers;
+}
+
+/**
+ * Refresh the list of available windows to be able to send to
+ */
+ddxclient.populateWindowList = function(){
+    var ddlAllWindows = document.getElementById('ddlAllWindows');
+    ddxclient.removeOldOptions(ddlAllWindows);
+
+    var wins = pureweb.getClient().getMultiWindow().getOpenWindows();
+
+    // have a default "Broadcast" option
+    var option = document.createElement("option");
+    option.text = "All Available Windows";
+    option.value = null;
+    ddlAllWindows.add(option);
+    var windowTimers = ddxclient.getMultiWindowTimers();
+
+    // put all windows in the list with the actual window as the value
+    for(var i in wins){
+        // if a window hasn't connected don't include it in the list of available windows
+        if(windowTimers.hasOwnProperty(wins[i].name)){
+            continue;
+        }
+        var option = document.createElement("option");
+        option.text = wins[i].name;
+        ddlAllWindows.add(option);
+    }
+}
+
+ddxclient.sendWindowMessage = function(){
+    var ddlAllWindows = document.getElementById('ddlAllWindows');
+    var selectedWindow = ddlAllWindows[ddlAllWindows.selectedIndex].text;
+    var message = document.getElementById('txtWindowMessage').value;
+    
+    if(selectedWindow === "All Available Windows"){
+        selectedWindow = null;
+    }
+    pureweb.getClient().getMultiWindow().sendMultiWindowMessage(message,selectedWindow);
+}
+
+/**
+ * Called multiWindowMessage is sent from another window
+ */
+ddxclient.onMultiWindowMessage_ = function(e) {
+        var message = "Message Received From: " + e.sender.source.name + "\n";
+        message += "Sent: " + ddxclient.getFormattedDate_() + "\n\n";
+        message += e.message;
+        var lstInbox = document.getElementById('txtInbox')
+        lstInbox.value = message;
+};
+
+ddxclient.onChildWindowClosed_ = function(e) {
+    console.log('DDx received notification that a child window was closed: ' + e.childWindowName);
+};
+
+/**
+ * Get timestamp in yyyy-mm-dd time
+ */
+ddxclient.getFormattedDate_ = function(){
+    var date = new Date();
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + ('0' + date.getMinutes()).slice(-2) + ":" + ('0' + date.getSeconds()).slice(-2);
+
+    return str;
+}
 
 //Session state changed event handler - checks for the failed state.
 ddxclient.onSessionStateChanged = function(event) {
