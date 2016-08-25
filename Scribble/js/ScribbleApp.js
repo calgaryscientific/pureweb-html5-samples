@@ -85,7 +85,7 @@ function startScribble() {
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
 
-        pureweb.connect(uri, {username: "admin", password: "admin"});
+        // pureweb.connect(uri, {username: "admin", password: "admin"});
 
          // for test of identity connect
         client.setTestAuthCredentials('666822c4-c87d-474e-a548-18770a580ac0',
