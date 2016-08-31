@@ -202,6 +202,40 @@ ddxclient.lastSessionState = null;
 ddxclient.babelTestInProgress = false;
 ddxclient.babelSessionStorageKeysPending = [];
 
+ddxclient.setupCounters = function(pgView) {
+    var view_timeLastUpdate = -1;
+    var view_interUpdateTimes = [];
+    var view_cumInterUpdateTimes = 0;
+    var fpsCounter = document.getElementById('fps-counter');
+
+    //Fires when the PW view is updated
+    var onViewUpdated = function() {
+        var now = Date.now();
+
+        if (view_timeLastUpdate > 0) {
+            var interUpdateTime = now - view_timeLastUpdate;
+            view_timeLastUpdate = now;
+            var numInterUpdateTimes = view_interUpdateTimes.length;
+
+            if (numInterUpdateTimes === 100) {
+                view_cumInterUpdateTimes -= view_interUpdateTimes[0];
+                view_interUpdateTimes.splice(0, 1);
+            }
+
+            view_cumInterUpdateTimes += interUpdateTime;
+            view_interUpdateTimes.push(interUpdateTime);
+            var fps = 1000.0 / (view_cumInterUpdateTimes / numInterUpdateTimes);
+            fpsCounter.textContent = 'Last FPS: ' + fps.toFixed(3);
+        }
+
+        view_timeLastUpdate = now;
+    };
+    
+    //listen for view updated events
+    pureweb.listen(pgView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
+
 ddxclient.runBabelTest = function(){
     if (!ddxclient.babelTestInProgress){
         ddxclient.resetBabelTest();
@@ -503,6 +537,7 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.populateBabelTable('pwDiagnosticsBabelTable', ddxclient.babelPhrases);
         ddxclient.populateBabelTable('pwDiagnosticsDataTypesTable', ddxclient.babelData);
 
+        ddxclient.setupCounters(ddxclient.pgView);
     }
 };
 
@@ -848,12 +883,6 @@ ddxclient.AnnotatedView = function(args) {
     pureweb.getFramework().getState().getStateManager().addChildChangedHandler(this.pathPrefix_ + '/MouseEvent', this.annotateView_, this);
     pureweb.getFramework().getState().getStateManager().addChildChangedHandler(this.pathPrefix_ + '/KeyEvent', this.annotateView_, this);
 
-    var params = {};
-
-    if (!pureweb.getClient().supportsBinary()) {
-        params = {UseBase64: true};
-    }
-
     var clientMoveCallback = function(e) {
         if (this.getViewName() === 'PGView') {
             if (goog.isDefAndNotNull(e.getBrowserEvent().targetTouches)){
@@ -865,14 +894,10 @@ ddxclient.AnnotatedView = function(args) {
                 while (target=target.offsetParent){
                     x -= target.offsetLeft;
                     y -= target.offsetTop;
-                }
-
-                this.showMousePos_(x, y);
-
+                }        
                 this.lastX_ = x;
                 this.lastY_ = y;
             }else{
-                this.showMousePos_(e.offsetX , e.offsetY);
                 this.lastX_ = e.offsetX;
                 this.lastY_ = e.offsetY;
             }
