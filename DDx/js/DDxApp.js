@@ -73,6 +73,9 @@ ddxclient.attachListeners = function(e) {
   
 ddxclient.connect = function() {
     ddxclient.attachListeners();
+
+    var client = pureweb.getClient();
+    
 	//now connect	
 	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
     if (collaborationToken) {
@@ -103,7 +106,10 @@ ddxclient.connect = function() {
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
 
-        pureweb.connect(uri, {username: "admin", password: "admin"});    
+        // pureweb.connect(uri, {username: "admin", password: "admin"}); 
+        client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
+            'bbbc22e3007585eb35a7f98bb42eeeee785605b38586dc0e01c8181cc33b0bde542fc8473ab4e650c6527e893e2a0c64a63420344beab3c29bde38c8cae86319');
+        pureweb.getClient().connectWithToken(uri);  
     }
 };
 

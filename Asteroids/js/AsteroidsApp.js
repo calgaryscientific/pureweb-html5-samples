@@ -112,7 +112,10 @@ function startAsteroids() {
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
 
-        pureweb.connect(uri, {username: "admin", password: "admin"});
+        // pureweb.connect(uri, {username: "admin", password: "admin"});
+        client.setTestAuthCredentials('fc358a27-3ec8-4cea-a147-b2e4cf951930',
+            'c8741972e2d08faf9d03e7f528b4e15c435a8e2b1c4f2b75c6576fedcd27eb35832344a5b7125a6baa55d8650be3797e868979f272d78ec00c658be96ccbd926');
+        pureweb.getClient().connectWithToken(uri);
     }
 }
 
