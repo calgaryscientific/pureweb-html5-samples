@@ -83,15 +83,34 @@ ddxclient.connect = function() {
     }
     else {
         var host = '';
-        var targetCluster = getParameterByName('targetCluster'); 
+        var targetCluster = getParameterByName('targetCluster');
+        var name = getParameterByName('name');
         
         if (targetCluster === ''){
             if (location.port === '2001' || location.port === '2002'){  
                 host = location.hostname; 
             } else {
-                var re = /(.*)\.pureweb\.io/;
+                var re = /(.*)\.pureweb\.io/;                
                 result = re.exec(location.hostname);
-                host = result[1] + '.platform.pureweb.io';
+
+                //If we're pulling this from ddx.pureweb.io bucket
+                //we want to go to ddx.platform.pureweb.io
+                //If we're pulling this form ddx-[foo].pureweb.io bucket
+                //we want to go to ddx-foo.platform.pureweb.io
+                if (result){
+                    var hyphen = result[1].indexOf('-');
+                    if (hyphen >= 0){
+                        var env = result[1].substring((hyphen+1), result[1].length);
+                        if (name === ''){
+                            name = 'DDxCpp';
+                        }
+                        host = name + '-' + env + '.platform.pureweb.io';
+                    } else {
+                        host = result[1] + '.platform.pureweb.io';    
+                    }
+                } else {
+                    host = location.hostname;
+                }
             }
         } else {
             host = targetCluster;
@@ -105,6 +124,7 @@ ddxclient.connect = function() {
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
+        console.log('Connecting to backend at:', uri);
 
         // pureweb.connect(uri, {username: "admin", password: "admin"}); 
         client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
