@@ -63,14 +63,33 @@ function startScribble() {
     else {
         var host = '';
         var targetCluster = getParameterByName('targetCluster'); 
-        
+        var name = getParameterByName('name');
+
         if (targetCluster === ''){
             if (location.port === '2001' || location.port === '2002'){  
                 host = location.hostname; 
-            } else {
-                var re = /(.*)\.pureweb\.io/;
+            } else {                
+                var re = /(.*)\.pureweb\.io/;                
                 result = re.exec(location.hostname);
-                host = result[1] + '.platform.pureweb.io';
+
+                //If we're pulling this from scribble.pureweb.io bucket
+                //we want to go to scribble.platform.pureweb.io
+                //If we're pulling this form scribble-[foo].pureweb.io bucket
+                //we want to go to scribble-foo.platform.pureweb.io
+                if (result){
+                    var hyphen = result[1].indexOf('-');
+                    if (hyphen >= 0){
+                        var env = result[1].substring((hyphen+1), result[1].length);
+                        if (name === ''){
+                            name = 'ScribbleCpp';
+                        }
+                        host = name + '-' + env + '.platform.pureweb.io';
+                    } else {
+                        host = result[1] + '.platform.pureweb.io';    
+                    }
+                } else {
+                    host = location.hostname;
+                }            
             }
         } else {
             host = targetCluster;
@@ -84,6 +103,7 @@ function startScribble() {
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
+        console.log('Connecting to backend at:', uri);
 
         // pureweb.connect(uri, {username: "admin", password: "admin"});
 
