@@ -127,8 +127,21 @@ ddxclient.connect = function() {
         console.log('Connecting to backend at:', uri);
 
         // pureweb.connect(uri, {username: "admin", password: "admin"}); 
-        client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
-            'bbbc22e3007585eb35a7f98bb42eeeee785605b38586dc0e01c8181cc33b0bde542fc8473ab4e650c6527e893e2a0c64a63420344beab3c29bde38c8cae86319');
+        if ( name === "DDxCpp") {
+            client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
+                'bbbc22e3007585eb35a7f98bb42eeeee785605b38586dc0e01c8181cc33b0bde542fc8473ab4e650c6527e893e2a0c64a63420344beab3c29bde38c8cae86319');
+        }
+
+        if ( name === "DDxCs") {
+            client.setTestAuthCredentials('52d2c1ff-33f7-4a90-8604-5a04e3b0eb54',
+                '0dadac0bcb98d9aed64846e46184e7fa762d592bc46554c593aad6618af46a6ea424e2f2faa760723ac573adccacb254534abfb68d7af273fc366aaef0b29926');
+        }
+
+        if ( name === "DDxJava") {
+            client.setTestAuthCredentials('39f30104-0447-410d-85d2-965bfc2c0592',
+                'f839ae9be15e4b25bdb63c99300f274203154f3387e9bb9b01f78d10744a96a5fcf29d3f3e518dd92ecc119a2caa9e745fd47e461da0792aeeb259a4de35cf4a');
+        }
+
         pureweb.getClient().connectWithToken(uri);  
     }
 };
