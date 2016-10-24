@@ -227,14 +227,16 @@ function onIsStateInitializedChanged(e) {
 
 //select the specified color in the color select
 function selectColor(colorName) {
-    var colorSelect = document.getElementById('color');
+    if (colorName !== undefined && colorName !== null) {
+        var colorSelect = document.getElementById('color');
 
-    for (var i = 0; i < colorSelect.options.length; i++) {
-        if (colorSelect.options[i].childNodes[0].nodeValue.toLowerCase() === colorName.toLowerCase()) {
-            if (colorSelect.selectedIndex !== i) {
-                colorSelect.selectedIndex = i;
+        for (var i = 0; i < colorSelect.options.length; i++) {
+            if (colorSelect.options[i].childNodes[0].nodeValue.toLowerCase() === colorName.toLowerCase()) {
+                if (colorSelect.selectedIndex !== i) {
+                    colorSelect.selectedIndex = i;
+                }
+                break;
             }
-            break;
         }
     }
 }
