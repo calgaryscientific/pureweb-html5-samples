@@ -71,16 +71,16 @@ function startAsteroids() {
     pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
 
     // setup sound value changed handlers
-    setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.wav');
-    setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.wav');
-    setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.wav');
-    setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.wav');
-    setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.wav');
+    setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.mp3');
+    setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.mp3');
+    setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.mp3');
+    setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.mp3');
+    setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.mp3');
 
-    setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.wav');
-    setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.wav');
-    setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.wav');
-    setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.wav');        
+    setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+    setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.mp3');
+    setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+    setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');        
 
     //now connect	
 	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
