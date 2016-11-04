@@ -1,4 +1,4 @@
-//
+// Version 5.0.0-DevBuild
 // Copyright (c) 2013 Calgary Scientific Inc., all rights reserved.
 //
 //IMPORTANT NOTE: This application is designed to show how to use PureWeb in its 

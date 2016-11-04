@@ -47,26 +47,27 @@ end
 
 desc "Stage #{project}"
 task :stage => [:setup] do	
-	 variations.each do|lang| 	
-    	puts "#{purewebhome}/web/clients/#{project}#{lang}"
-    	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}")		
+	variations.each do|lang| 	
+    	path = "#{purewebhome}/web/clients/#{project}#{lang}"
+    	FileUtils.mkdir_p("#{path}")		
 	    #Copy everything but the Rakefile
 	    files = Dir.glob("*")
 	    files.delete("Rakefile") 
-	    FileUtils.cp_r(files, "#{purewebhome}/web/clients/#{project}#{lang}/")		
+	    FileUtils.cp_r(files, "#{path}/")		
 
 	    if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
-	    	FileUtils.mkdir_p("#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")		
-	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{purewebhome}/web/clients/#{project}#{lang}/lib/pureweb")
+	    	FileUtils.mkdir_p("#{path}/lib/pureweb")		
+	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{path}/lib/pureweb")
 			
 			# Update index to prevent caching pureweb js between builds
-			src = File.read("#{purewebhome}/web/clients/#{project}#{lang}/index.html")
+			src = File.read("#{path}/index.html")
 			updated = src.gsub(/pureweb.min.js/, "pureweb.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
 			updated = updated.gsub(/pureweb.h264.min.js/, "pureweb.h264.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
 			
 			# To write changes to the file, use:
-			File.open("#{purewebhome}/web/clients/#{project}#{lang}/index.html", "w") {|file| file.puts updated }
-		end			 	
+			File.open("#{path}/index.html", "w") {|file| file.puts updated }
+		end	
+		update_version_in_file("#{path}/js/DDxApp.js", "", "-#{PW_VERSION['hash']}", /[5-9].[0-9].[0-9]-DevBuild/)		 	
     end
 end
 
