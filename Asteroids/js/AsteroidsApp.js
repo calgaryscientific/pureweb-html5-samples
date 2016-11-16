@@ -70,17 +70,21 @@ function startAsteroids() {
     //progresses a level.
     pureweb.getFramework().getState().getStateManager().addValueChangedHandler('Level', onLevelChanged);
 
-    // setup sound value changed handlers
-    setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.mp3');
-    setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.mp3');
-    setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.mp3');
-    setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.mp3');
-    setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.mp3');
+    var ua = navigator.userAgent.toLowerCase();
+    var isSafari = ((ua.indexOf('safari') > -1) && !(ua.indexOf('chrome') > -1))
+    // setup sound value changed handlers, except for safari, which doesn't cache these audio files
+    if(!isSafari){
+        setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.mp3');
+        setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.mp3');
+        setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.mp3');
+        setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.mp3');
+        setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.mp3');
 
-    setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
-    setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.mp3');
-    setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
-    setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');        
+        setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');
+    }        
 
     //now connect	
 	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
