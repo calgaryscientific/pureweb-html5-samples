@@ -83,9 +83,9 @@ function startAsteroids() {
     setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');        
 
     //now connect	
-	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
-    if (collaborationToken) {
-        pureweb.joinSession(collaborationToken, "Scientific");   
+	
+    if (pureweb.getClient().canJoinSession()) {
+        pureweb.joinSession("Scientific");   
     }
     else {
         var host = '';

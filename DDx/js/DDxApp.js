@@ -77,9 +77,8 @@ ddxclient.connect = function() {
     var client = pureweb.getClient();
     
 	//now connect	
-	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
-    if (collaborationToken) {
-        pureweb.joinSession(collaborationToken, "Scientific");   
+    if (pureweb.getClient().canJoinSession()) {
+        pureweb.joinSession("Scientific");   
     }
     else {
         var host = '';

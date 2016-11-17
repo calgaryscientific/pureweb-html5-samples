@@ -56,9 +56,8 @@ function startScribble() {
     pureweb.listen(framework, pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged);
     
     //everything is setup and ready to go - connect
-	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
-    if (collaborationToken) {
-        pureweb.joinSession(collaborationToken, "Scientific");   
+    if (pureweb.getClient().canJoinSession()) {
+        pureweb.joinSession("Scientific");   
     }
     else {
         var host = '';
