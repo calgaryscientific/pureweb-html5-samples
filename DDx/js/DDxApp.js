@@ -92,6 +92,10 @@ ddxclient.connect = function() {
             } else {
                 var re = /(.*)\.pureweb\.io/;                
                 result = re.exec(location.hostname);
+  
+                if (name === ''){
+                    name = 'DDxCpp';
+                }
 
                 //If we're pulling this from ddx.pureweb.io bucket
                 //we want to go to ddx.platform.pureweb.io
@@ -101,12 +105,10 @@ ddxclient.connect = function() {
                     var hyphen = result[1].indexOf('-');
                     if (hyphen >= 0){
                         var env = result[1].substring((hyphen+1), result[1].length);
-                        if (name === ''){
-                            name = 'DDxCpp';
-                        }
+                      
                         host = name + '-' + env + '.platform.pureweb.io';
                     } else {
-                        host = result[1] + '.platform.pureweb.io';    
+                        host = name + '.platform.pureweb.io';    
                     }
                 } else {
                     host = location.hostname;
