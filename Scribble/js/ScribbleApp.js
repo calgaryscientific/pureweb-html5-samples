@@ -71,6 +71,10 @@ function startScribble() {
             } else {                
                 var re = /(.*)\.pureweb\.io/;                
                 result = re.exec(location.hostname);
+   
+                if (name === ''){
+                    name = 'ScribbleCpp';
+                }
 
                 //If we're pulling this from scribble.pureweb.io bucket
                 //we want to go to scribble.platform.pureweb.io
@@ -80,12 +84,10 @@ function startScribble() {
                     var hyphen = result[1].indexOf('-');
                     if (hyphen >= 0){
                         var env = result[1].substring((hyphen+1), result[1].length);
-                        if (name === ''){
-                            name = 'ScribbleCpp';
-                        }
+                     
                         host = name + '-' + env + '.platform.pureweb.io';
                     } else {
-                        host = result[1] + '.platform.pureweb.io';    
+                        host = name + '.platform.pureweb.io';    
                     }
                 } else {
                     host = location.hostname;
