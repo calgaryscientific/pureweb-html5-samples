@@ -42,6 +42,10 @@ function startScribble() {
        
     var client = pureweb.getClient();
 
+    pureweb.listen(client.latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, function(){
+        updateNetworkInformation(scribbleView);
+    });
+
     //register event listeners for connected changed to create the Scribble View instance, and session state changes
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
     pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);   
@@ -126,6 +130,7 @@ function startScribble() {
         }
 
         pureweb.getClient().connectWithToken(uri);
+        setupFPSCounter(scribbleView);
     }
 }
 
@@ -178,6 +183,52 @@ function onConnectedChanged(e) {
     }
 }
 
+function updateNetworkInformation (view){
+    var client = pureweb.getClient();
+    var pingCounter = document.getElementById('latency-counter');
+    var bandwidthCounter = document.getElementById('bandwidth-counter');
+    var encodingType = document.getElementById('encoder-type');
+    var latency = (client.latency.endTime - client.latency.beginTime).toFixed(3);
+
+    pingCounter.textContent = 'Ping: ' + latency;
+    bandwidthCounter.textContent = 'Mbps: ' + client.mbps.rate.toFixed(3);
+    encodingType.textContent = 'Mime: ' + view.encoderConfiguration_.actualEventTarget_.fullQualityFormat_.mimeType_;
+}
+
+//Initialize the Frames-per-second counter in the top right corner
+function setupFPSCounter(view) {
+    var timeLastUpdate = -1;
+    var interUpdateTimes = [];
+    var cumInterUpdateTimes = 0;
+    var fpsCounter = document.getElementById('fps-counter');
+
+    //Fires when the PW view is updated
+    var onViewUpdated = function() {
+        var now = Date.now();
+
+        if (timeLastUpdate > 0) {
+            var interUpdateTime = now - timeLastUpdate;
+            timeLastUpdate = now;
+            var numInterUpdateTimes = interUpdateTimes.length;
+
+            if (numInterUpdateTimes === 100) {
+                cumInterUpdateTimes -= interUpdateTimes[0];
+                interUpdateTimes.splice(0, 1);
+            }
+
+            cumInterUpdateTimes += interUpdateTime;
+            interUpdateTimes.push(interUpdateTime);
+            var fps = 1000.0 / (cumInterUpdateTimes / numInterUpdateTimes);
+            fpsCounter.textContent = 'Fps: ' + fps.toFixed(3);
+        }
+
+        timeLastUpdate = now;
+    };
+
+    //listen for view updated events
+    pureweb.listen(view, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
 //Stalled state changed event handler - logs a message indicating if the connection to the service
 //application has entered the stalled state, or whether it has recovered.
 function onStalledChanged(event) {
@@ -225,6 +276,8 @@ function onIsStateInitializedChanged(e) {
     if (framework.isStateInitialized()) {
         selectColor(framework.getState().getValue('ScribbleColor'));
     }
+    // begin heartbeat for network information
+    pureweb.getClient().ping_();
 }
 
 //select the specified color in the color select

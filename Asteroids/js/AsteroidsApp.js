@@ -62,6 +62,7 @@ function startAsteroids() {
     //register event listener for connected changed to create the Asteroids View, and session state changed
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
     pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);    
+    pureweb.listen(pureweb.getFramework(), pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged); 
    
     //Attach the listeners for disconnection events.
     setDisconnectOnUnload(true);
@@ -173,6 +174,7 @@ function onConnectedChanged(e) {
         }
 
         setupFPSCounter(asteroidsView);
+        pureweb.listen(client.latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, updateNetworkInformation)
     }
 }
 
@@ -312,6 +314,11 @@ function generateShareUrl(){
     }
 }
 
+function onIsStateInitializedChanged() {
+    //start heartbeat for network information 
+    pureweb.getClient().ping_();
+}
+
 //When the level changes in AppState
 function onLevelChanged(event){
     var level = 0;
@@ -349,7 +356,7 @@ function setupFPSCounter(asteroidsView) {
             cumInterUpdateTimes += interUpdateTime;
             interUpdateTimes.push(interUpdateTime);
             var fps = 1000.0 / (cumInterUpdateTimes / numInterUpdateTimes);
-            fpsCounter.textContent = 'FPS: ' + fps.toFixed(3);
+            fpsCounter.textContent = 'Fps: ' + fps.toFixed(3);
         }
 
         timeLastUpdate = now;
@@ -357,6 +364,18 @@ function setupFPSCounter(asteroidsView) {
 
     //listen for view updated events
     pureweb.listen(asteroidsView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
+function updateNetworkInformation (){
+    var client = pureweb.getClient();
+    var pingCounter = document.getElementById('latency-counter');
+    var bandwidthCounter = document.getElementById('bandwidth-counter');
+    var encodingType = document.getElementById('encoder-type');
+    var latency = (client.latency.endTime - client.latency.beginTime).toFixed(3);
+
+    pingCounter.textContent = 'Ping: ' + latency;
+    bandwidthCounter.textContent = 'Mbps: ' + client.mbps.rate.toFixed(3);
+    encodingType.textContent = 'Mime: ' + asteroidsView.encoderConfiguration_.actualEventTarget_.fullQualityFormat_.mimeType_;
 }
 
 setupRepeatableClipPlayer = function(statePath, clipName) {
