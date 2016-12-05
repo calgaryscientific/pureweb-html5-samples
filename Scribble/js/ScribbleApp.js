@@ -188,11 +188,11 @@ function updateNetworkInformation (view){
     var pingCounter = document.getElementById('latency-counter');
     var bandwidthCounter = document.getElementById('bandwidth-counter');
     var encodingType = document.getElementById('encoder-type');
-    var latency = (client.latency.endTime - client.latency.beginTime).toFixed(3);
+    var latency = client.latency.durationMs().toFixed(3);
 
     pingCounter.textContent = 'Ping: ' + latency;
     bandwidthCounter.textContent = 'Mbps: ' + client.mbps.rate.toFixed(3);
-    encodingType.textContent = 'Mime: ' + view.encoderConfiguration_.actualEventTarget_.fullQualityFormat_.mimeType_;
+    encodingType.textContent = 'Mime: ' + view.getEncodingType();
 }
 
 //Initialize the Frames-per-second counter in the top right corner
@@ -276,8 +276,6 @@ function onIsStateInitializedChanged(e) {
     if (framework.isStateInitialized()) {
         selectColor(framework.getState().getValue('ScribbleColor'));
     }
-    // begin heartbeat for network information
-    pureweb.getClient().ping_();
 }
 
 //select the specified color in the color select

@@ -62,7 +62,6 @@ function startAsteroids() {
     //register event listener for connected changed to create the Asteroids View, and session state changed
     pureweb.listen(client, pureweb.client.WebClient.EventType.CONNECTED_CHANGED, onConnectedChanged);
     pureweb.listen(client, pureweb.client.WebClient.EventType.SESSION_STATE_CHANGED, onSessionStateChanged);    
-    pureweb.listen(pureweb.getFramework(), pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged); 
    
     //Attach the listeners for disconnection events.
     setDisconnectOnUnload(true);
@@ -314,11 +313,6 @@ function generateShareUrl(){
     }
 }
 
-function onIsStateInitializedChanged() {
-    //start heartbeat for network information 
-    pureweb.getClient().ping_();
-}
-
 //When the level changes in AppState
 function onLevelChanged(event){
     var level = 0;
@@ -371,11 +365,11 @@ function updateNetworkInformation (){
     var pingCounter = document.getElementById('latency-counter');
     var bandwidthCounter = document.getElementById('bandwidth-counter');
     var encodingType = document.getElementById('encoder-type');
-    var latency = (client.latency.endTime - client.latency.beginTime).toFixed(3);
+    var latency = client.latency.durationMs().toFixed(3);
 
     pingCounter.textContent = 'Ping: ' + latency;
     bandwidthCounter.textContent = 'Mbps: ' + client.mbps.rate.toFixed(3);
-    encodingType.textContent = 'Mime: ' + asteroidsView.encoderConfiguration_.actualEventTarget_.fullQualityFormat_.mimeType_;
+    encodingType.textContent = 'Mime: ' + asteroidsView.getEncodingType();
 }
 
 setupRepeatableClipPlayer = function(statePath, clipName) {

@@ -69,9 +69,6 @@ ddxclient.attachListeners = function(e) {
     pureweb.listen(pureweb.getClient().getSessionStorage(),
                         pureweb.client.SessionStorage.EventType.KEY_ADDED,
                         ddxclient.storageKeyAdded);
-    pureweb.listen(pureweb.getFramework(),
-                        pureweb.client.Framework.EventType.IS_STATE_INITIALIZED,
-                        onIsStateInitializedChanged);
 };
   
 ddxclient.connect = function() {
@@ -520,7 +517,7 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
         ddxclient.cineController = ddxclient.ddxCineView.createCinematicController();
         pureweb.listen(pureweb.getClient().latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, function(e){
-            ddxclient.DDxLatency = 'Ping: ' + (client.latency.endTime - client.latency.beginTime).toFixed(3);
+            ddxclient.DDxLatency = 'Ping: ' + client.latency.durationMs().toFixed(3);
             ddxclient.DDxBandwidth = 'Mbps: ' + client.mbps.rate.toFixed(3);
         });
         pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PRESENTATION_FRAMES_PER_SECOND_CHANGED, function(e){
@@ -583,11 +580,6 @@ ddxclient.connectedChanged_ = function(e) {
 
     }
 };
-
-function onIsStateInitializedChanged(){
-    // begin heartbeat for network information
-    pureweb.getClient().ping_();
-}
 
 ddxclient.populateBabelTable = function(table, contents){
     //Populate the babel unicode table dynamically
