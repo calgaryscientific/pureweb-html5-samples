@@ -1002,12 +1002,12 @@ ddxclient.AnnotatedView.prototype.annotateView_ = function() {
     if (this.getViewName() === 'PGView') {
         this.showMousePos_(this.lastX_, this.lastY_);
         var client = pureweb.getClient()
-        var txtNetwork = ddxclient.DDxBandwidth + '  ' + ddxclient.DDxLatency + '  '  + ddxclient.DDxFPS + ' ';
-
+        voffset++;
         context.fillStyle = 'cyan';
         context.font = '10pt Arial';
-
-        context.fillText(txtNetwork, this.canvas_.width - context.measureText(txtNetwork).width-5, fakedHeight + 4);
+        context.fillText(ddxclient.DDxBandwidth, 5, (fakedHeight + 4) * voffset++);
+        context.fillText(ddxclient.DDxLatency, 5, (fakedHeight + 4) * voffset++);
+        context.fillText(ddxclient.DDxFPS, 5, (fakedHeight + 4) * voffset++);
     }
 };
 
