@@ -96,9 +96,10 @@ function startScribble() {
     
         var qs = '';
         if (location.search === ''){
-            qs = '?name=ScribbleCpp'
+            qs = '?name=ScribbleCpp';
+            name = 'ScribbleCpp';
         } else {
-            qs = location.search
+            qs = location.search;
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;

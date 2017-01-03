@@ -117,9 +117,10 @@ ddxclient.connect = function() {
     
         var qs = '';
         if (location.search === ''){
-            qs = '?name=DDxCpp'
+            qs = '?name=DDxCpp';
+            name = 'DDxCpp';
         } else {
-            qs = location.search
+            qs = location.search;
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
