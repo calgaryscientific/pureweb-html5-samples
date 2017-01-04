@@ -77,9 +77,8 @@ ddxclient.connect = function() {
     var client = pureweb.getClient();
     
 	//now connect	
-	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
-    if (collaborationToken) {
-        pureweb.joinSession(collaborationToken, "Scientific");   
+    if (pureweb.getClient().canJoinSession()) {
+        pureweb.joinSession("Scientific");   
     }
     else {
         var host = '';
@@ -120,9 +119,10 @@ ddxclient.connect = function() {
     
         var qs = '';
         if (location.search === ''){
-            qs = '?name=DDxCpp'
+            qs = '?name=DDxCpp';
+            name = 'DDxCpp';
         } else {
-            qs = location.search
+            qs = location.search;
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;

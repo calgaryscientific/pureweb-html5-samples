@@ -87,9 +87,9 @@ function startAsteroids() {
     }        
 
     //now connect	
-	var collaborationToken = pureweb.util.getParameterByName(location.href, 'collaborationToken');
-    if (collaborationToken) {
-        pureweb.joinSession(collaborationToken, "Scientific");   
+	
+    if (pureweb.getClient().canJoinSession()) {
+        pureweb.joinSession("Scientific");   
     }
     else {
         var host = '';
@@ -109,9 +109,9 @@ function startAsteroids() {
     
         var qs = '';
         if (location.search === ''){
-            qs = '?name=AsteroidsJava'
+            qs = '?name=AsteroidsJava';            
         } else {
-            qs = location.search
+            qs = location.search;
         }
 
         var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
