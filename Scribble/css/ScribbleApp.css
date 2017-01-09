@@ -30,3 +30,13 @@
     border-width:10px;
     border-color:#ffffff
 }
+
+.profiler {
+    color: black;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 12px;
+    width: 100px;
+    float:right;
+    padding-top: 5px;
+}

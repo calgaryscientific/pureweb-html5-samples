@@ -50,7 +50,7 @@ html, body {
     margin-top: 25px;
 }
 
-.fps-counter {
+.profiler {
     color: white;
     text-align: center;
     font-family: sans-serif;

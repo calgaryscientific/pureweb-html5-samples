@@ -21,8 +21,12 @@
         <div id="wrapper">
             <div id="controls">
                 <div style="float:right;">
-                    <button onclick="clearCanvas();">Erase All</button>
-                    <button onclick="generateShareUrl();">Share</button>
+                    <button style="float: right;" onclick="clearCanvas();">Erase All</button>
+                    <button style="float: right; "onclick="generateShareUrl();">Share</button>
+                    <div id="fps-counter" class="profiler">Fps:</div>
+                    <div id="latency-counter" class="profiler">Ping:</div>
+                    <div id="bandwidth-counter" class="profiler">Mbps:</div>
+                    <div id="encoder-type" class="profiler">Mime:</div>
                 </div>
                 <select onChange="changeScribbleColor();" id="color"></select>
             </div>

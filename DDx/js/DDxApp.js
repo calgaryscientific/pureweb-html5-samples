@@ -233,6 +233,9 @@ ddxclient.DDxEcho = '/DDx/Echo/';
 ddxclient.DDxEchoContent = 'Content';
 ddxclient.DDxEchoType = 'Type';
 ddxclient.DDxEchoKey = 'Key';
+ddxclient.DDxFPS = 'Fps: ';
+ddxclient.DDxLatency = 'Ping: '
+ddxclient.DDxBandwidth = 'Mbps: '
 ddxclient.imageCounter = 0;
 ddxclient.lastSessionState = null;
 ddxclient.babelTestInProgress = false;
@@ -242,7 +245,6 @@ ddxclient.setupCounters = function(pgView) {
     var view_timeLastUpdate = -1;
     var view_interUpdateTimes = [];
     var view_cumInterUpdateTimes = 0;
-    var fpsCounter = document.getElementById('fps-counter');
 
     //Fires when the PW view is updated
     var onViewUpdated = function() {
@@ -261,7 +263,7 @@ ddxclient.setupCounters = function(pgView) {
             view_cumInterUpdateTimes += interUpdateTime;
             view_interUpdateTimes.push(interUpdateTime);
             var fps = 1000.0 / (view_cumInterUpdateTimes / numInterUpdateTimes);
-            fpsCounter.textContent = 'Last FPS: ' + fps.toFixed(3);
+            ddxclient.DDxFPS = 'Fps: ' + fps.toFixed(3);
         }
 
         view_timeLastUpdate = now;
@@ -494,7 +496,8 @@ ddxclient.connectedChanged_ = function(e) {
 
         // create an acetate toolset for the views to use
 
-        var toolset = new pureweb.client.collaboration.AcetateToolset();
+        var toolset = new pureweb.client.collaboration.AcetateToolset();       
+        var client = pureweb.getClient();
 
         var cursorPositionToolDelegate = new pureweb.client.collaboration.CursorPositionTool();
         var polylineToolDelegate = new pureweb.client.collaboration.PolylineTool();
@@ -513,6 +516,10 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
         ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
         ddxclient.cineController = ddxclient.ddxCineView.createCinematicController();
+        pureweb.listen(pureweb.getClient().latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, function(e){
+            ddxclient.DDxLatency = 'Ping: ' + client.latency.durationMs().toFixed(3);
+            ddxclient.DDxBandwidth = 'Mbps: ' + client.mbps.rate.toFixed(3);
+        });
         pureweb.listen(ddxclient.cineController, pureweb.client.cine.CineController.EventType.PRESENTATION_FRAMES_PER_SECOND_CHANGED, function(e){
             var span = document.getElementById('measuredFrameRate');
             span.innerHTML = ddxclient.cineController.getPresentationFramesPerSecond();
@@ -570,6 +577,7 @@ ddxclient.connectedChanged_ = function(e) {
         ddxclient.populateBabelTable('pwDiagnosticsDataTypesTable', ddxclient.babelData);
 
         ddxclient.setupCounters(ddxclient.pgView);
+
     }
 };
 
@@ -993,6 +1001,13 @@ ddxclient.AnnotatedView.prototype.annotateView_ = function() {
 
     if (this.getViewName() === 'PGView') {
         this.showMousePos_(this.lastX_, this.lastY_);
+        var client = pureweb.getClient()
+        voffset++;
+        context.fillStyle = 'cyan';
+        context.font = '10pt Arial';
+        context.fillText(ddxclient.DDxBandwidth, 5, (fakedHeight + 4) * voffset++);
+        context.fillText(ddxclient.DDxLatency, 5, (fakedHeight + 4) * voffset++);
+        context.fillText(ddxclient.DDxFPS, 5, (fakedHeight + 4) * voffset++);
     }
 };
 

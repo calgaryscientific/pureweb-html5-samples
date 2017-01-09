@@ -173,6 +173,7 @@ function onConnectedChanged(e) {
         }
 
         setupFPSCounter(asteroidsView);
+        pureweb.listen(client.latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, updateNetworkInformation)
     }
 }
 
@@ -349,7 +350,7 @@ function setupFPSCounter(asteroidsView) {
             cumInterUpdateTimes += interUpdateTime;
             interUpdateTimes.push(interUpdateTime);
             var fps = 1000.0 / (cumInterUpdateTimes / numInterUpdateTimes);
-            fpsCounter.textContent = 'FPS: ' + fps.toFixed(3);
+            fpsCounter.textContent = 'Fps: ' + fps.toFixed(3);
         }
 
         timeLastUpdate = now;
@@ -357,6 +358,18 @@ function setupFPSCounter(asteroidsView) {
 
     //listen for view updated events
     pureweb.listen(asteroidsView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
+function updateNetworkInformation (){
+    var client = pureweb.getClient();
+    var pingCounter = document.getElementById('latency-counter');
+    var bandwidthCounter = document.getElementById('bandwidth-counter');
+    var encodingType = document.getElementById('encoder-type');
+    var latency = client.latency.durationMs().toFixed(3);
+
+    pingCounter.textContent = 'Ping: ' + latency;
+    bandwidthCounter.textContent = 'Mbps: ' + client.mbps.rate.toFixed(3);
+    encodingType.textContent = 'Mime: ' + asteroidsView.getEncodingType();
 }
 
 setupRepeatableClipPlayer = function(statePath, clipName) {
