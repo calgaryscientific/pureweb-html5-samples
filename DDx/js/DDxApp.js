@@ -245,9 +245,15 @@ ddxclient.setupCounters = function(pgView) {
     var view_timeLastUpdate = -1;
     var view_interUpdateTimes = [];
     var view_cumInterUpdateTimes = 0;
+    var viewUpdatedTimer = ddxclient.setupFpsTimer(view_interUpdateTimes, view_timeLastUpdate);
 
     //Fires when the PW view is updated
     var onViewUpdated = function() {
+         // if view isn't updated every half second, clear the fps buffer
+        if (goog.isDefAndNotNull(viewUpdatedTimer)){
+            clearTimeout(viewUpdatedTimer);
+            viewUpdatedTimer = ddxclient.setupFpsTimer(view_interUpdateTimes, view_timeLastUpdate);
+        } 
         var now = Date.now();
 
         if (view_timeLastUpdate > 0) {
@@ -273,6 +279,16 @@ ddxclient.setupCounters = function(pgView) {
     pureweb.listen(pgView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
 }
 
+ddxclient.setupFpsTimer = function(interUpdateTimes, timeLastUpdate){
+    var fpsTimer = setTimeout(function(){
+        interUpdateTimes = [];
+        timeLastUpdate = 0;
+        ddxclient.DDxFPS = 'Fps: 0';
+        ddxclient.pgView.annotateView_();
+    }, 500);
+
+    return fpsTimer;
+}
 
 ddxclient.runBabelTest = function(){
     if (!ddxclient.babelTestInProgress){
