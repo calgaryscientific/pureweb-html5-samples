@@ -201,9 +201,16 @@ function setupFPSCounter(view) {
     var interUpdateTimes = [];
     var cumInterUpdateTimes = 0;
     var fpsCounter = document.getElementById('fps-counter');
+    var viewUpdatedTimer = setupFpsTimer(interUpdateTimes, timeLastUpdate);
+
 
     //Fires when the PW view is updated
     var onViewUpdated = function() {
+        // if view isn't updated every half second, clear the fps buffer
+        if (viewUpdatedTimer){
+            clearTimeout(viewUpdatedTimer);
+            viewUpdatedTimer = setupFpsTimer(interUpdateTimes, timeLastUpdate);
+        } 
         var now = Date.now();
 
         if (timeLastUpdate > 0) {
@@ -227,6 +234,17 @@ function setupFPSCounter(view) {
 
     //listen for view updated events
     pureweb.listen(view, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+}
+
+function setupFpsTimer(interUpdateTimes, timeLastUpdate){
+    var fpsTimer = setTimeout(function(){
+        var fpsCounter = document.getElementById('fps-counter');
+        interUpdateTimes = [];
+        timeLastUpdate = 0;
+        fpsCounter.textContent = 'Fps: 0';
+    }, 500);
+
+    return fpsTimer;
 }
 
 //Stalled state changed event handler - logs a message indicating if the connection to the service
