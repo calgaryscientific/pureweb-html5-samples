@@ -236,6 +236,7 @@ ddxclient.DDxEchoKey = 'Key';
 ddxclient.DDxFPS = 'Fps: ';
 ddxclient.DDxLatency = 'Ping: '
 ddxclient.DDxBandwidth = 'Mbps: '
+ddxclient.DDxViewSize = '';
 ddxclient.imageCounter = 0;
 ddxclient.lastSessionState = null;
 ddxclient.babelTestInProgress = false;
@@ -274,9 +275,15 @@ ddxclient.setupCounters = function(pgView) {
 
         view_timeLastUpdate = now;
     };
+
+    var onViewResized = function() {
+        var size = pgView.getSize();
+        ddxclient.DDxViewSize = size.width + ' x ' + size.height;
+    }
     
     //listen for view updated events
     pureweb.listen(pgView, pureweb.client.View.EventType.VIEW_UPDATED, onViewUpdated);
+    pureweb.listen(pgView, pureweb.client.View.EventType.VIEW_RESIZED, onViewResized);
 }
 
 ddxclient.setupFpsTimer = function(interUpdateTimes, timeLastUpdate){
@@ -925,7 +932,6 @@ ddxclient.AnnotatedView = function(args) {
                             var evt = e.event_ || e;
                             if ((evt.args.params_.imagecounter !== null) && (typeof evt.args.params_.imageCounter !== 'undefined')){
                                 var counter = parseInt(e.event.args.params_.imagecounter);
-                                console.log('decoded counter: ', counter, ' local counter: ', ddxclient.imageCounter);
                                 if (counter < ddxclient.imageCounter){
                                     alert('I need an adult! Images are coming in out of order!  Last image ' + ddxclient.imageCounter + ' current img: ' + counter);
                                 }
@@ -990,40 +996,43 @@ ddxclient.AnnotatedView.prototype.annotateView_ = function() {
     context.fillStyle = 'cyan';
     context.font = '10pt Arial';
     var fakedHeight = context.measureText('m').width;
-    var state = pureweb.getFramework().getState().getStateManager().getState();
-    if (state !== null){
-        var path = this.pathPrefix_ + '/MouseEvent';
-        context.fillText('MouseEvent Type: ' + state.getValue(path + '/Type'), 5, fakedHeight + 4);
+    if (this.getViewName() !== 'PGView') {
+        var state = pureweb.getFramework().getState().getStateManager().getState();
+        if (state !== null){
+            var path = this.pathPrefix_ + '/MouseEvent';
+            context.fillText('MouseEvent Type: ' + state.getValue(path + '/Type'), 5, fakedHeight + 4);
 
-        var voffset = 2;
-        context.fillText('ChangedButton: ' + state.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('Buttons: ' + state.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('X: ' + state.getValue(path + '/X') + ' Y: ' + state.getValue(path + '/Y'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('Delta: ' + state.getValue(path + '/Delta'), 5, (fakedHeight + 4) * voffset++);
+            var voffset = 2;
+            context.fillText('ChangedButton: ' + state.getValue(path + '/ChangedButton'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('Buttons: ' + state.getValue(path + '/Buttons'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('X: ' + state.getValue(path + '/X') + ' Y: ' + state.getValue(path + '/Y'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('Delta: ' + state.getValue(path + '/Delta'), 5, (fakedHeight + 4) * voffset++);
 
-        voffset++;
-        path = this.pathPrefix_ + '/KeyEvent';
-        context.fillText('KeyEvent Type: ' + state.getValue(path + '/Type'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('KeyCode: ' + state.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('CharacterCode: ' + state.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * voffset++);
-        context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset);
-    }
+            voffset++;
+            path = this.pathPrefix_ + '/KeyEvent';
+            context.fillText('KeyEvent Type: ' + state.getValue(path + '/Type'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('KeyCode: ' + state.getValue(path + '/KeyCode'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('CharacterCode: ' + state.getValue(path + '/CharacterCode'), 5, (fakedHeight + 4) * voffset++);
+            context.fillText('Modifiers: ' + state.getValue(path + '/Modifiers'), 5, (fakedHeight + 4) * voffset);
+        }
 
-    voffset+=2;
-    context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * voffset++);
-    context.fillText('Using ObjectURLs: ' + pureweb.getClient().supportsBinary(), 5, (fakedHeight + 4) * voffset++);
-    context.fillText('Using WebSockets: ' + pureweb.getClient().supportsWebsockets(), 5, (fakedHeight + 4) * voffset++);
+        voffset+=2;
+        context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Using ObjectURLs: ' + pureweb.getClient().supportsBinary(), 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Using WebSockets: ' + pureweb.getClient().supportsWebsockets(), 5, (fakedHeight + 4) * voffset++);
 
-    if (this.getViewName() === 'PGView') {
+    }else{
         this.showMousePos_(this.lastX_, this.lastY_);
         var client = pureweb.getClient()
-        voffset++;
+        voffset = 2;
         context.fillStyle = 'cyan';
         context.font = '10pt Arial';
         context.fillText(ddxclient.DDxBandwidth, 5, (fakedHeight + 4) * voffset++);
         context.fillText(ddxclient.DDxLatency, 5, (fakedHeight + 4) * voffset++);
         context.fillText(ddxclient.DDxFPS, 5, (fakedHeight + 4) * voffset++);
+        context.fillText(ddxclient.DDxViewSize, 5, (fakedHeight + 4) * voffset++);
+        context.fillText('Encoder Format: ' + this.getEncodingType(), 5, (fakedHeight + 4) * voffset++);
     }
 };
 
