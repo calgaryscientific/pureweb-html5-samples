@@ -61,14 +61,6 @@ label, input {
   font: normal 10px "Lucida Sans Typewriter", "Courier New", Courier, fixed;
 }
 
-.perf {
-  margin: 0;
-  border: 0;
-  padding: 4px;
-  font: italic 95% Arial, sans-serif;
-  color: #999;
-}
-
 .profiler {
     color: white;
     text-align: center;
@@ -79,18 +71,6 @@ label, input {
 }
 .centerCell {
   text-align: center;
-}
-
-#perf {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  text-align: right;
-  margin: 0;
-  border: 0;
-  padding: 4px;
-  font: italic 95% Arial, sans-serif;
-  color: #999;
 }
 
  html, body {
