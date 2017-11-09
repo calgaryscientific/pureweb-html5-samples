@@ -58,6 +58,7 @@ task :stage => [:setup] do
 	    if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
 	    	FileUtils.mkdir_p("#{path}/lib/pureweb")		
 	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{path}/lib/pureweb")
+	    	FileUtils.cp_r("#{pureweblibs}/HTML5/h264bsd_asm.wasm", "#{path}")
 			
 			# Update index to prevent caching pureweb js between builds
 			src = File.read("#{path}/index.html")

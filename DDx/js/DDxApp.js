@@ -529,15 +529,6 @@ ddxclient.connectedChanged_ = function(e) {
         var polylineTool = toolset.registerToolDelegate(polylineToolDelegate);
         toolset.setDefaultTool(cursorPositionTool);
 
-        // create the View instances
-        ddxclient.ddxViews = [];
-        ddxclient.ddxViews[0] = new ddxclient.AnnotatedView({id: 'ddxview0', 'viewName': '/DDx/View0'});
-        ddxclient.ddxViews[1] = new ddxclient.AnnotatedView({id: 'ddxview1', 'viewName': '/DDx/View1'});
-        ddxclient.ddxViews[2] = new ddxclient.AnnotatedView({id: 'ddxview2', 'viewName': '/DDx/View2'});
-        ddxclient.ddxViews[3] = new ddxclient.AnnotatedView({id: 'ddxview3', 'viewName': '/DDx/View3'});
-        ddxclient.pgView = new ddxclient.AnnotatedView({id: 'pgview', 'viewName': 'PGView'});
-        ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
-        ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
         ddxclient.cineController = ddxclient.ddxCineView.createCinematicController();
         pureweb.listen(pureweb.getClient().latency, pureweb.client.diagnostics.Profiler.EventType.COMPLETE, function(e){
             ddxclient.DDxLatency = 'Ping: ' + client.latency.durationMs().toFixed(3);
@@ -1726,4 +1717,23 @@ ddxclient.createCustomRenderer = function(target) {
     };
 
     return new pureweb.client.Framework.createViewRendererImplementation(target, myPngRendererImplementation);
+};
+
+// create the View instances
+function makeViews(){
+    ddxclient.ddxViews = [];
+    ddxclient.ddxViews[0] = new ddxclient.AnnotatedView({id: 'ddxview0', 'viewName': '/DDx/View0'});
+    ddxclient.ddxViews[0].primeRenderer('video/h264');
+    ddxclient.ddxViews[1] = new ddxclient.AnnotatedView({id: 'ddxview1', 'viewName': '/DDx/View1'});
+    ddxclient.ddxViews[1].primeRenderer('video/h264');
+    ddxclient.ddxViews[2] = new ddxclient.AnnotatedView({id: 'ddxview2', 'viewName': '/DDx/View2'});
+    ddxclient.ddxViews[2].primeRenderer('video/h264');
+    ddxclient.ddxViews[3] = new ddxclient.AnnotatedView({id: 'ddxview3', 'viewName': '/DDx/View3'});
+    ddxclient.ddxViews[3].primeRenderer('video/h264');
+    ddxclient.pgView = new ddxclient.AnnotatedView({id: 'pgview', 'viewName': 'PGView'});
+    ddxclient.pgView.primeRenderer('video/h264');
+    ddxclient.ddxOwnershipView = new pureweb.client.View({id: 'aspectandownership', 'viewName': 'DDx_OwnershipView'});
+    ddxclient.ddxOwnershipView.primeRenderer('video/h264');
+    ddxclient.ddxCineView = new pureweb.client.View({id: 'cineview', 'viewName': 'DDx_CineView'});
+    ddxclient.ddxCineView.primeRenderer('video/h264');
 };
