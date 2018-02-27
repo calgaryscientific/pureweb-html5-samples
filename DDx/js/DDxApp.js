@@ -76,75 +76,95 @@ ddxclient.connect = function() {
 
     var client = pureweb.getClient();
     
-	//now connect	
-    if (pureweb.getClient().canJoinSession()) {
-        pureweb.joinSession("Scientific");   
-    }
-    else {
-        var host = '';
-        var targetCluster = getParameterByName('targetCluster');
-        var name = getParameterByName('name');
+    //now connect - connection path depends on whether we are talking to a PW5+ or PW4
+    //server. In the former case, there will be a cluster address.
+
+    var connectWithToken = function() {
+        if (pureweb.canJoinSessionWithToken(location.href)) {
+            pureweb.joinSessionWithTokenFromUri(location.href, "Scientific");   
+        }
+        else {
+            var host = '';
+            var targetCluster = getParameterByName('targetCluster');
+            var name = getParameterByName('name');
         
-        if (targetCluster === ''){
-            if (location.port === '2001' || location.port === '2002'){  
-                host = location.hostname; 
-            } else {
-                var re = /(.*)\.pureweb\.io/;                
-                result = re.exec(location.hostname);
-  
-                if (name === ''){
-                    name = 'DDxCpp';
-                }
-
-                //If we're pulling this from ddx.pureweb.io bucket
-                //we want to go to ddx.platform.pureweb.io
-                //If we're pulling this form ddx-[foo].pureweb.io bucket
-                //we want to go to ddx-foo.platform.pureweb.io
-                if (result){
-                    var hyphen = result[1].indexOf('-');
-                    if (hyphen >= 0){
-                        var env = result[1].substring((hyphen+1), result[1].length);
-                      
-                        host = name + '-' + env + '.platform.pureweb.io';
-                    } else {
-                        host = name + '.platform.pureweb.io';    
-                    }
+            if (targetCluster === ''){
+                if (location.port === '2001' || location.port === '2002'){  
+                    host = location.hostname; 
                 } else {
-                    host = location.hostname;
+                    var re = /(.*)\.pureweb\.io/;                
+                    result = re.exec(location.hostname);
+  
+                    if (name === ''){
+                        name = 'DDxCpp';
+                    }
+
+                    //If we're pulling this from ddx.pureweb.io bucket
+                    //we want to go to ddx.platform.pureweb.io
+                    //If we're pulling this form ddx-[foo].pureweb.io bucket
+                    //we want to go to ddx-foo.platform.pureweb.io
+                    if (result){
+                        var hyphen = result[1].indexOf('-');
+                        if (hyphen >= 0){
+                            var env = result[1].substring((hyphen+1), result[1].length);
+                      
+                            host = name + '-' + env + '.platform.pureweb.io';
+                        } else {
+                            host = name + '.platform.pureweb.io';    
+                        }
+                    } else {
+                        host = location.hostname;
+                    }
                 }
-            }
-        } else {
-            host = targetCluster;
-        }                        
+            } else {
+                host = targetCluster;
+            }                        
     
-        var qs = '';
-        if (location.search === ''){
-            qs = '?name=DDxCpp';
-            name = 'DDxCpp';
-        } else {
-            qs = location.search;
+            var qs = '';
+            if (location.search === ''){
+                qs = '?name=DDxCpp';
+                name = 'DDxCpp';
+            } else {
+                qs = location.search;
+            }
+
+            var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
+            console.log('Connecting to backend at:', uri);
+
+            // pureweb.connect(uri, {username: "admin", password: "admin"}); 
+            if ( name === "DDxCpp") {
+                client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
+                    'bbbc22e3007585eb35a7f98bb42eeeee785605b38586dc0e01c8181cc33b0bde542fc8473ab4e650c6527e893e2a0c64a63420344beab3c29bde38c8cae86319');
+            }
+
+            if ( name === "DDxCs") {
+                client.setTestAuthCredentials('52d2c1ff-33f7-4a90-8604-5a04e3b0eb54',
+                    '0dadac0bcb98d9aed64846e46184e7fa762d592bc46554c593aad6618af46a6ea424e2f2faa760723ac573adccacb254534abfb68d7af273fc366aaef0b29926');
+            }
+
+            if ( name === "DDxJava") {
+                client.setTestAuthCredentials('39f30104-0447-410d-85d2-965bfc2c0592',
+                    'f839ae9be15e4b25bdb63c99300f274203154f3387e9bb9b01f78d10744a96a5fcf29d3f3e518dd92ecc119a2caa9e745fd47e461da0792aeeb259a4de35cf4a');
+            }
+
+            pureweb.getClient().connectWithToken(uri);
         }
+    };
 
-        var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
-        console.log('Connecting to backend at:', uri);
+    var connectWithoutToken = function() {
+        pureweb.connect(location.href, {username: "admin", password: "admin"});        
+    };
 
-        // pureweb.connect(uri, {username: "admin", password: "admin"}); 
-        if ( name === "DDxCpp") {
-            client.setTestAuthCredentials('5a8646cb-c114-4936-b079-4e07cb678953',
-                'bbbc22e3007585eb35a7f98bb42eeeee785605b38586dc0e01c8181cc33b0bde542fc8473ab4e650c6527e893e2a0c64a63420344beab3c29bde38c8cae86319');
-        }
-
-        if ( name === "DDxCs") {
-            client.setTestAuthCredentials('52d2c1ff-33f7-4a90-8604-5a04e3b0eb54',
-                '0dadac0bcb98d9aed64846e46184e7fa762d592bc46554c593aad6618af46a6ea424e2f2faa760723ac573adccacb254534abfb68d7af273fc366aaef0b29926');
-        }
-
-        if ( name === "DDxJava") {
-            client.setTestAuthCredentials('39f30104-0447-410d-85d2-965bfc2c0592',
-                'f839ae9be15e4b25bdb63c99300f274203154f3387e9bb9b01f78d10744a96a5fcf29d3f3e518dd92ecc119a2caa9e745fd47e461da0792aeeb259a4de35cf4a');
-        }
-
-        pureweb.getClient().connectWithToken(uri);  
+    if (getParameterByName('targetCluster') !== '') {
+        connectWithToken();
+    } else {
+        pureweb.getClusterAddress(function(clusterAddress) {
+            if (clusterAddress !== null) {
+                connectWithToken();
+            } else {
+                connectWithoutToken();
+            }        
+        });
     }
 };
 
