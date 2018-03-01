@@ -79,9 +79,9 @@ ddxclient.connect = function() {
     //now connect - connection path depends on whether we are talking to a PW5+ or PW4
     //server. In the former case, there will be a cluster address.
 
-    var connectWithToken = function() {
-        if (pureweb.canJoinSessionWithToken(location.href)) {
-            pureweb.joinSessionWithTokenFromUri(location.href, "Scientific");   
+    var connectToPlatform = function() {
+        if (pureweb.canJoinPlatformSession(location.href)) {
+            pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
         }
         else {
             var host = '';
@@ -147,12 +147,12 @@ ddxclient.connect = function() {
                     'f839ae9be15e4b25bdb63c99300f274203154f3387e9bb9b01f78d10744a96a5fcf29d3f3e518dd92ecc119a2caa9e745fd47e461da0792aeeb259a4de35cf4a');
             }
 
-            pureweb.getClient().connectWithToken(uri);
+            pureweb.getClient().connectToPlatform(uri);
         }
     };
 
-    var connectWithoutToken = function() {
-        pureweb.connect(location.href, {username: "admin", password: "admin"});        
+    var connectToServer = function() {
+        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
     };
 
     if (getParameterByName('targetCluster') !== '') {
@@ -160,9 +160,9 @@ ddxclient.connect = function() {
     } else {
         pureweb.getClusterAddress(function(clusterAddress) {
             if (clusterAddress !== null) {
-                connectWithToken();
+                connectToPlatform();
             } else {
-                connectWithoutToken();
+                connectToServer();
             }        
         });
     }

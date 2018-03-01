@@ -62,9 +62,9 @@ function startScribble() {
     //now connect - connection path depends on whether we are talking to a PW5+ or PW4
     //server. In the former case, there will be a cluster address.
 
-    var connectWithToken = function() {
-        if (pureweb.canJoinSessionWithToken(location.href)) {
-            pureweb.joinSessionWithTokenFromUri(location.href, "Scientific");   
+    var connectToPlatform = function() {
+        if (pureweb.canJoinPlatformSession(location.href)) {
+            pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
         }
         else {
             var host = '';
@@ -130,22 +130,22 @@ function startScribble() {
                     '10c12d8fc81001b1e8c772b4311f492f15626e0323a70e05d1c939de093feb57e620fcbc4ebb280fcb36dc5c1137ae2ce3dd91d248213cfc6ae4224391b627cc');
             }
     
-            pureweb.getClient().connectWithToken(uri);
+            pureweb.getClient().connectToPlatform(uri);
         }
     };
 
-    var connectWithoutToken = function() {
-        pureweb.connect(location.href, {username: "admin", password: "admin"});        
+    var connectToServer = function() {
+        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
     };
 
     if (getParameterByName('targetCluster') !== '') {
-        connectWithToken();
+        connectToPlatform();
     } else {
         pureweb.getClusterAddress(function(clusterAddress) {
             if (clusterAddress !== null) {
-                connectWithToken();
+                connectToPlatform();
             } else {
-                connectWithoutToken();
+                connectToServer();
             }        
         });
     }
