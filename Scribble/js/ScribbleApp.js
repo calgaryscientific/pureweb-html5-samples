@@ -59,79 +59,98 @@ function startScribble() {
     //the default scribble color
     pureweb.listen(framework, pureweb.client.Framework.EventType.IS_STATE_INITIALIZED, onIsStateInitializedChanged);
     
-    //everything is setup and ready to go - connect
-    if (pureweb.getClient().canJoinSession()) {
-        pureweb.joinSession("Scientific");   
-    }
-    else {
-        var host = '';
-        var targetCluster = getParameterByName('targetCluster'); 
-        var name = getParameterByName('name');
+    //now connect - connection path depends on whether we are talking to a PW5+ or PW4
+    //server. In the former case, there will be a cluster address.
 
-        if (targetCluster === ''){
-            if (location.port === '2001' || location.port === '2002'){  
-                host = location.hostname; 
-            } else {                
-                var re = /(.*)\.pureweb\.io/;                
-                result = re.exec(location.hostname);
-   
-                if (name === ''){
-                    name = 'ScribbleCpp';
-                }
-
-                //If we're pulling this from scribble.pureweb.io bucket
-                //we want to go to scribble.platform.pureweb.io
-                //If we're pulling this form scribble-[foo].pureweb.io bucket
-                //we want to go to scribble-foo.platform.pureweb.io
-                if (result){
-                    var hyphen = result[1].indexOf('-');
-                    if (hyphen >= 0){
-                        var env = result[1].substring((hyphen+1), result[1].length);
-                     
-                        host = name + '-' + env + '.platform.pureweb.io';
-                    } else {
-                        host = name + '.platform.pureweb.io';    
-                    }
-                } else {
-                    host = location.hostname;
-                }            
-            }
-        } else {
-            host = targetCluster;
-        }                        
+    var connectToPlatform = function() {
+        if (pureweb.canJoinPlatformSession(location.href)) {
+            pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
+        }
+        else {
+            var host = '';
+            var targetCluster = getParameterByName('targetCluster'); 
+            var name = getParameterByName('name');
     
-        var qs = '';
-        if (location.search === ''){
-            qs = '?name=ScribbleCpp';
-            name = 'ScribbleCpp';
-        } else {
-            qs = location.search;
-        }
-
-        var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
-        console.log('Connecting to backend at:', uri);
-
-        // pureweb.connect(uri, {username: "admin", password: "admin"});
-
-        if ( name === "ScribbleCpp") {
-         // for test of identity connect
-            client.setTestAuthCredentials('666822c4-c87d-474e-a548-18770a580ac0',
-                '47e6e5d96d8e83203ad52c47b6f43803ac520eb72776306c7eeb628337aacfa33bd09852580d36ccb21b26bbca59533d25267575b227f490f1e8ea01b6602f79');
-        } 
+            if (targetCluster === ''){
+                if (location.port === '2001' || location.port === '2002'){  
+                    host = location.hostname; 
+                } else {                
+                    var re = /(.*)\.pureweb\.io/;                
+                    result = re.exec(location.hostname);
+       
+                    if (name === ''){
+                        name = 'ScribbleCpp';
+                    }
+    
+                    //If we're pulling this from scribble.pureweb.io bucket
+                    //we want to go to scribble.platform.pureweb.io
+                    //If we're pulling this form scribble-[foo].pureweb.io bucket
+                    //we want to go to scribble-foo.platform.pureweb.io
+                    if (result){
+                        var hyphen = result[1].indexOf('-');
+                        if (hyphen >= 0){
+                            var env = result[1].substring((hyphen+1), result[1].length);
+                         
+                            host = name + '-' + env + '.platform.pureweb.io';
+                        } else {
+                            host = name + '.platform.pureweb.io';    
+                        }
+                    } else {
+                        host = location.hostname;
+                    }            
+                }
+            } else {
+                host = targetCluster;
+            }                        
         
-        if ( name === "ScribbleCs") {
-            client.setTestAuthCredentials('0fd537b9-587a-4281-8e08-e0d7ae0513b0',
-                '892a46fb389a4e2f150e9a6d63ee767f749c038ad922bd2205ed663bd83a31f24a5fa778f025b93188ccf23f601d6e02b6e5d7f473ce76a3dcdd73a8772c04d4');
+            var qs = '';
+            if (location.search === ''){
+                qs = '?name=ScribbleCpp';
+                name = 'ScribbleCpp';
+            } else {
+                qs = location.search;
+            }
+    
+            var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
+            console.log('Connecting to backend at:', uri);
+     
+            if ( name === "ScribbleCpp") {
+             // for test of identity connect
+                client.setTestAuthCredentials('666822c4-c87d-474e-a548-18770a580ac0',
+                    '47e6e5d96d8e83203ad52c47b6f43803ac520eb72776306c7eeb628337aacfa33bd09852580d36ccb21b26bbca59533d25267575b227f490f1e8ea01b6602f79');
+            } 
+            
+            if ( name === "ScribbleCs") {
+                client.setTestAuthCredentials('0fd537b9-587a-4281-8e08-e0d7ae0513b0',
+                    '892a46fb389a4e2f150e9a6d63ee767f749c038ad922bd2205ed663bd83a31f24a5fa778f025b93188ccf23f601d6e02b6e5d7f473ce76a3dcdd73a8772c04d4');
+            }
+    
+            if ( name === "ScribbleJava") {
+                client.setTestAuthCredentials('6288f8d1-577d-437d-8ebc-efd7cd6826df',
+                    '10c12d8fc81001b1e8c772b4311f492f15626e0323a70e05d1c939de093feb57e620fcbc4ebb280fcb36dc5c1137ae2ce3dd91d248213cfc6ae4224391b627cc');
+            }
+    
+            pureweb.getClient().connectToPlatform(uri);
         }
+    };
 
-        if ( name === "ScribbleJava") {
-            client.setTestAuthCredentials('6288f8d1-577d-437d-8ebc-efd7cd6826df',
-                '10c12d8fc81001b1e8c772b4311f492f15626e0323a70e05d1c939de093feb57e620fcbc4ebb280fcb36dc5c1137ae2ce3dd91d248213cfc6ae4224391b627cc');
-        }
+    var connectToServer = function() {
+        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
+    };
 
-        pureweb.getClient().connectWithToken(uri);
-        setupFPSCounter(scribbleView);
+    if (getParameterByName('targetCluster') !== '') {
+        connectToPlatform();
+    } else {
+        pureweb.getClusterAddress(function(clusterAddress) {
+            if (clusterAddress !== null) {
+                connectToPlatform();
+            } else {
+                connectToServer();
+            }        
+        });
     }
+
+    setupFPSCounter(scribbleView);
 }
 
 function getParameterByName(name) {

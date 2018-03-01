@@ -1,4 +1,4 @@
-// Version 5.0.0-DevBuild
+// Version 5.0.0-Beta-47-g3b7ca6b
 // Copyright (c) 2013 Calgary Scientific Inc., all rights reserved.
 //
 //IMPORTANT NOTE: This application is designed to show how to use PureWeb in its 
@@ -73,6 +73,7 @@ function startAsteroids() {
     var ua = navigator.userAgent.toLowerCase();
     var isSafari = ((ua.indexOf('safari') > -1) && !(ua.indexOf('chrome') > -1))
     // setup sound value changed handlers, except for safari, which doesn't cache these audio files
+    // TODO - PW4/PW5 base path differences (./ in PW5 versus / in PW4) need to be resolved somehow
     if(!isSafari){
         setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.mp3');
         setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.mp3');
@@ -86,44 +87,61 @@ function startAsteroids() {
         setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');
     }        
 
-    //now connect	
-	
-    if (pureweb.getClient().canJoinSession()) {
-        pureweb.joinSession("Scientific");   
-    }
-    else {
-        var host = '';
-        var targetCluster = getParameterByName('targetCluster'); 
-        
-        if (targetCluster === ''){
-            if (location.port === '2001' || location.port === '2002'){  
-                host = location.hostname; 
-            } else {
-                var re = /(.*)\.pureweb\.io/;
-                result = re.exec(location.hostname);
-                host = result[1] + '.platform.pureweb.io';
-            }
-        } else {
-            host = targetCluster;
-        }                        
-    
-        var qs = '';
-        if (location.search === ''){
-            qs = '?name=AsteroidsJava';            
-        } else {
-            qs = location.search;
-        }
+    //now connect - connection path depends on whether we are talking to a PW5+ or PW4
+    //server. In the former case, there will be a cluster address.
 
-        var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
-        console.log('Connecting to backend at:', uri);
-        
-        // pureweb.connect(uri, {username: "admin", password: "admin"});
-        client.setTestAuthCredentials('fc358a27-3ec8-4cea-a147-b2e4cf951930',
-            'c8741972e2d08faf9d03e7f528b4e15c435a8e2b1c4f2b75c6576fedcd27eb35832344a5b7125a6baa55d8650be3797e868979f272d78ec00c658be96ccbd926');
-        pureweb.getClient().connectWithToken(uri);
+    var connectToPlatform = function() {
+        if (pureweb.canJoinPlatformSession(location.href)) {
+            pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
+        }
+        else {
+            var host = '';
+            var targetCluster = getParameterByName('targetCluster'); 
+       
+            if (targetCluster === ''){
+                if (location.port === '2001' || location.port === '2002'){  
+                    host = location.hostname; 
+                } else {
+                    var re = /(.*)\.pureweb\.io/;
+                    result = re.exec(location.hostname);
+                    host = result[1] + '.platform.pureweb.io';
+                }
+            } else {
+                host = targetCluster;
+            }                        
+    
+            var qs = '';
+            if (location.search === ''){
+                qs = '?name=AsteroidsJava';            
+            } else {
+                qs = location.search;
+            }
+
+            var uri = location.protocol + '//' + host +  '/pureweb/app' + qs;
+            console.log('Connecting to backend at:', uri);
+
+            client.setTestAuthCredentials('fc358a27-3ec8-4cea-a147-b2e4cf951930',
+                'c8741972e2d08faf9d03e7f528b4e15c435a8e2b1c4f2b75c6576fedcd27eb35832344a5b7125a6baa55d8650be3797e868979f272d78ec00c658be96ccbd926');
+            pureweb.getClient().connectToPlatform(uri);
+        }
+    };
+
+    var connectToServer = function() {
+        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
+    };
+
+    if (getParameterByName('targetCluster') !== '') {
+        connectToPlatform();
+    } else {
+        pureweb.getClusterAddress(function(clusterAddress) {
+            if (clusterAddress !== null) {
+                connectToPlatform();
+            } else {
+                connectToServer();
+            }        
+        });
     }
 }
-
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
