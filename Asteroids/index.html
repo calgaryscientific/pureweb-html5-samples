@@ -8,17 +8,17 @@
 
         <title>PureWeb&#174; HTML5 Asteroids App Sample</title>
 
-        <script src="./lib/pureweb/pureweb.min.js"></script>
+        <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.min.js"></script>
         <!-- Include app specific code --> 
-        <script src="./js/AsteroidsApp.js"></script> 
-        <script src="./lib/pureweb/pureweb.sodium.min.js"></script>
-        <link rel="stylesheet" href="./css/AsteroidsApp.css">              
+        <script src="%PUREWEB_BASE_PATH%/js/AsteroidsApp.js"></script> 
+        <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.sodium.min.js"></script>
+        <link rel="stylesheet" href="%PUREWEB_BASE_PATH%/css/AsteroidsApp.css">              
     </head>
 
     <body onLoad="startAsteroids();">
         <div id="controls">
             <button id="setNameButton" onclick="getName();">Set Name</button>
-            <button id="attributionsButton" onclick="window.open('./sound/attributions.html')">Attributions</button>            
+            <button id="attributionsButton" onclick="window.open('%PUREWEB_BASE_PATH%/sound/attributions.html')">Attributions</button>            
             <button id="shareButton" onclick="generateShareUrl();">Share</button>
             <div id="fps-counter" class="profiler">Fps:</div>
             <div id="latency-counter" class="profiler">Ping:</div>
@@ -31,7 +31,7 @@
 		<!-- End of diagnostics panel -->
 
         <div id="wrapper">
-            <img id="backgroundImg" src="./img/background0.jpg"/>
+            <img id="backgroundImg" src="%PUREWEB_BASE_PATH%/img/background0.jpg"/>
 
             <!--  This defines the Asteroids View -->
             <div id="AsteroidsView" class="purewebview"></div>
@@ -46,6 +46,6 @@
             <div id="fireButton"  class="fireButton" ontouchstart="touchDown(event);" ontouchend="touchUp(event);" onmspointerup="touchUp(event);" onmspointerdown="touchDown(event);"></div>
             <div id="shieldsButton"  class="shieldsButton" ontouchstart="simKeyDown(event, SHIELDS_KEYCODE);" ontouchend="simKeyUp(event, SHIELDS_KEYCODE);" onmspointerup="simKeyUp(event, SHIELDS);" onmspointerdown="simKeyDown(event, SHIELDS);"></div>
         </div>
-        <script src="./lib/pureweb/pureweb.h264.min.js"></script>
+        <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.h264.min.js"></script>
     </body>
 </html>

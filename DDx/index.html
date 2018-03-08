@@ -13,12 +13,12 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>PureWeb DDxClient</title>
     
-    <script src="./bower_components/closurelibrary/closure/goog/base.js"></script>
-    <script src="./bower_components/closurelibrary/closure/goog/deps.js"></script>
+    <script src="%PUREWEB_BASE_PATH%/bower_components/closurelibrary/closure/goog/base.js"></script>
+    <script src="%PUREWEB_BASE_PATH%/bower_components/closurelibrary/closure/goog/deps.js"></script>
 
-    <script src="./lib/pureweb/pureweb.min.js"></script> 
-    <script src="./js/DDxApp.js"></script>
-    <script src="./lib/pureweb/pureweb.sodium.min.js"></script>
+    <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.min.js"></script> 
+    <script src="%PUREWEB_BASE_PATH%/js/DDxApp.js"></script>
+    <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.sodium.min.js"></script>
 
     <script>
         goog.require('goog.dom');
@@ -39,10 +39,10 @@
         goog.require('ddxclient');        
     </script>
 
-    <link rel="stylesheet" href="./css/DDxApp.css">
-    <link rel="stylesheet" href="./css/slider.css">
-    <link rel="stylesheet" href="./css/checkbox.css">
-    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="%PUREWEB_BASE_PATH%/css/DDxApp.css">
+    <link rel="stylesheet" href="%PUREWEB_BASE_PATH%/css/slider.css">
+    <link rel="stylesheet" href="%PUREWEB_BASE_PATH%/css/checkbox.css">
+    <link rel="stylesheet" href="%PUREWEB_BASE_PATH%/css/button.css">
 
     <style>
         html, body {
@@ -450,6 +450,6 @@
                 pureweb.client.CollaborationManager.EventType.OWNER_SESSION_CHANGED,
                 ddxclient.onOwnerSessionChanged);
     </script>
-    <script src="./lib/pureweb/pureweb.h264.min.js"></script>
+    <script src="%PUREWEB_BASE_PATH%/lib/pureweb/pureweb.h264.min.js"></script>
 </body>
 </html>

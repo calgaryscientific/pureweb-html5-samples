@@ -67,7 +67,10 @@ task :stage => [:setup] do
 			# To write changes to the file, use:
 			File.open("#{path}/index.html", "w") {|file| file.puts updated }
 		end	
-		update_version_in_file("#{path}/js/DDxApp.js", "", "-#{PW_VERSION['hash']}", /[5-9].[0-9].[0-9]-DevBuild/)		 	
+		update_version_in_file("#{path}/js/DDxApp.js", "", "-#{PW_VERSION['hash']}", /[5-9].[0-9].[0-9]-DevBuild/)
+
+		# base path replacement to account for PW5/Tomcat differences
+        replaceStringInFile("%PUREWEB_BASE_PATH%", ".", "#{path}/index.html")
     end
 end
 
@@ -75,6 +78,57 @@ desc "Stage clean #{project}"
 task :stageclean do
 	variations.each do|lang| 
 	 	FileUtils.rm_r("#{purewebhome}/web/clients/#{project}#{lang}", :force => true)
+	end
+end
+
+desc "Stage Tomcat #{project}"
+task :stageTomcat => [:setup] do	
+	 variations.each do|lang| 	
+    	path = "#{purewebhome}/tomcat-server/webapp/"
+    	FileUtils.mkdir_p("#{path}")		
+	    #Copy everything but the Rakefile - index.html is copied to DDxApp.html in a separate step
+	    files = Dir.glob("*")
+	    files.delete("Rakefile")
+	    files.delete("index.html") 
+	    FileUtils.cp_r(files, "#{path}/")
+
+	    FileUtils.cp_r("index.html", "#{path}/DDxApp.html")	
+
+	    if File.exist?("#{pureweblibs}/HTML5/pureweb.min.js")
+	    	FileUtils.mkdir_p("#{path}/lib/pureweb")		
+	    	FileUtils.cp_r("#{pureweblibs}/HTML5/.", "#{path}/lib/pureweb")
+			
+			# Update index to prevent caching pureweb js between builds
+			src = File.read("#{path}/DDxApp.html")
+			updated = src.gsub(/pureweb.min.js/, "pureweb.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
+			updated = updated.gsub(/pureweb.h264.min.js/, "pureweb.h264.min.js?build=" + Time.now().strftime("%m%d%y%H%M%S"))
+
+			# To write changes to the file, use:
+			File.open("#{path}/DDxApp.html", "w") {|file| file.puts updated }
+		end
+		update_version_in_file("#{path}/js/DDxApp.js", "", "-#{PW_VERSION['hash']}", /[5-9].[0-9].[0-9]-DevBuild/)
+
+		# base path replacement to account for PW5/Tomcat differences
+        replaceStringInFile("%PUREWEB_BASE_PATH%", "", "#{path}/DDxApp.html")
+    end
+end
+
+desc "Stage Tomcat clean #{project}"
+task :stageTomcatClean do
+	path = "#{purewebhome}/tomcat-server/webapp"
+	FileUtils.rm_r("#{path}/DDxApp.html", :force => true)
+	FileUtils.rm_r("#{path}/css/DDxApp.css", :force => true)
+	FileUtils.rm_r("#{path}/css/button.css", :force => true)
+	FileUtils.rm_r("#{path}/css/checkbox.css", :force => true)
+	FileUtils.rm_r("#{path}/css/slider.css", :force => true)
+	FileUtils.rm_r("#{path}/js/DDxApp.js", :force => true)
+	FileUtils.rm_r("#{path}/bower_components", :force => true)	
+
+	# if there are  no more web client apps, then delete the PureWeb HTML5 libs too 
+	# otherwise make the conservative assumption that they are still in use
+
+	if Dir.glob("#{path}/*.html").empty?
+        FileUtils.rm_r("#{path}/lib/pureweb", :force => true)		
 	end
 end
 

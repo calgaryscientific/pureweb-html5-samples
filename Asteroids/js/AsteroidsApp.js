@@ -73,18 +73,17 @@ function startAsteroids() {
     var ua = navigator.userAgent.toLowerCase();
     var isSafari = ((ua.indexOf('safari') > -1) && !(ua.indexOf('chrome') > -1))
     // setup sound value changed handlers, except for safari, which doesn't cache these audio files
-    // TODO - PW4/PW5 base path differences (./ in PW5 versus / in PW4) need to be resolved somehow
     if(!isSafari){
-        setupRepeatableClipPlayer('/Sounds/Fire', './sound/151013__bubaproducer__laser-classic-shot-2.mp3');
-        setupRepeatableClipPlayer('/Sounds/Explosion', './sound/94185__nbs-dark__explosion.mp3');
-        setupRepeatableClipPlayer('/Sounds/ShipExplosion', './sound/77339__tcpp__explosion-17.mp3');
-        setupRepeatableClipPlayer('/Sounds/Collision', './sound/140867__juskiddink__boing.mp3');
-        setupRepeatableClipPlayer('/Sounds/GameOver', './sound/175409__kirbydx__wah-wah-sad-trombone.mp3');
+        setupRepeatableClipPlayer('/Sounds/Fire', '%PUREWEB_BASE_PATH%/sound/151013__bubaproducer__laser-classic-shot-2.mp3');
+        setupRepeatableClipPlayer('/Sounds/Explosion', '%PUREWEB_BASE_PATH%/sound/94185__nbs-dark__explosion.mp3');
+        setupRepeatableClipPlayer('/Sounds/ShipExplosion', '%PUREWEB_BASE_PATH%/sound/77339__tcpp__explosion-17.mp3');
+        setupRepeatableClipPlayer('/Sounds/Collision', '%PUREWEB_BASE_PATH%/sound/140867__juskiddink__boing.mp3');
+        setupRepeatableClipPlayer('/Sounds/GameOver', '%PUREWEB_BASE_PATH%/sound/175409__kirbydx__wah-wah-sad-trombone.mp3');
 
-        setupOnOffClipPlayer('/Sounds/Ship1/Thrusters',  './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
-        setupOnOffClipPlayer('/Sounds/Ship1/Shields', './sound/66087__calmarius__forcefield.mp3');
-        setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', './sound/146770__qubodup__rocket-boost-engine-loop.mp3');
-        setupOnOffClipPlayer('/Sounds/Ship2/Shields', './sound/66087__calmarius__forcefield.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship1/Thrusters', '%PUREWEB_BASE_PATH%/sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship1/Shields', '%PUREWEB_BASE_PATH%/sound/66087__calmarius__forcefield.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship2/Thrusters', '%PUREWEB_BASE_PATH%/sound/146770__qubodup__rocket-boost-engine-loop.mp3');
+        setupOnOffClipPlayer('/Sounds/Ship2/Shields', '%PUREWEB_BASE_PATH%/sound/66087__calmarius__forcefield.mp3');
     }        
 
     //now connect - connection path depends on whether we are talking to a PW5+ or PW4
@@ -339,7 +338,7 @@ function onLevelChanged(event){
     //Change the background
     if ((val !== null) && (val !== undefined)){
         level = val % 5;
-        var path = './img/background' + level + '.jpg';
+        var path = '%PUREWEB_BASE_PATH%/img/background' + level + '.jpg';
         document.getElementById('backgroundImg').src = path;
     }
 }
