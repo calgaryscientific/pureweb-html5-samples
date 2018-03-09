@@ -156,7 +156,7 @@ ddxclient.connect = function() {
     };
 
     if (getParameterByName('targetCluster') !== '') {
-        connectWithToken();
+        connectToPlatform();
     } else {
         pureweb.getClusterAddress(function(clusterAddress) {
             if (clusterAddress !== null) {
