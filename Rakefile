@@ -49,6 +49,18 @@ task :stageclean do
 	end
 end
 
+task :stageTomcat => [:setup] do
+	projects.each do |name, project|
+		sh("cd #{project} && rake stageTomcat")
+	end
+end
+
+task :stageTomcatClean do
+	projects.each do |name, project|
+		sh("cd #{project} && rake stageTomcatClean")
+	end
+end
+
 task :package do
 	
 	projects.each do |name, project|
