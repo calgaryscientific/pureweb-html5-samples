@@ -94,21 +94,8 @@ function startAsteroids() {
             pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
         }
         else {
-            var host = '';
-            var targetCluster = getParameterByName('targetCluster'); 
-       
-            if (targetCluster === ''){
-                if (location.port === '2001' || location.port === '2002'){  
-                    host = location.hostname; 
-                } else {
-                    var re = /(.*)\.pureweb\.io/;
-                    result = re.exec(location.hostname);
-                    host = result[1] + '.platform.pureweb.io';
-                }
-            } else {
-                host = targetCluster;
-            }                        
-    
+           
+            var host = getPlatformHostname();
             var qs = '';
             if (location.search === ''){
                 qs = '?name=AsteroidsJava';            
@@ -129,17 +116,36 @@ function startAsteroids() {
         pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
     };
 
-    if (getParameterByName('targetCluster') !== '') {
-        connectToPlatform();
-    } else {
-        pureweb.getClusterAddress(function(clusterAddress) {
-            if (clusterAddress !== null) {
-                connectToPlatform();
+    var possiblePlatformURL = location.protocol + '//' + getPlatformHostname();
+    pureweb.isPlatformEndpoint(possiblePlatformURL, function(isPlatform) {
+        if (isPlatform) {
+            connectToPlatform();
+        } else {
+            connectToServer();
+        }        
+    });
+}
+
+function getPlatformHostname(){
+    var host = null;
+    var targetCluster = getParameterByName('targetCluster'); 
+
+    if (targetCluster === ''){
+        if (location.port === '2001' || location.port === '2002'){  
+            host = location.hostname; 
+        } else {
+            var re = /(.*)\.pureweb\.io/;
+            result = re.exec(location.hostname);
+            if (result){
+                host = result[1] + '.platform.pureweb.io';
             } else {
-                connectToServer();
-            }        
-        });
-    }
+                host = location.hostname;
+            }
+        }
+    } else {
+        host = targetCluster;
+    }  
+    return host;                      
 }
 
 function getParameterByName(name) {

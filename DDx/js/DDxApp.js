@@ -84,43 +84,10 @@ ddxclient.connect = function() {
             pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
         }
         else {
-            var host = '';
-            var targetCluster = getParameterByName('targetCluster');
-            var name = getParameterByName('name');
-        
-            if (targetCluster === ''){
-                if (location.port === '2001' || location.port === '2002'){  
-                    host = location.hostname; 
-                } else {
-                    var re = /(.*)\.pureweb\.io/;                
-                    result = re.exec(location.hostname);
-  
-                    if (name === ''){
-                        name = 'DDxCpp';
-                    }
-
-                    //If we're pulling this from ddx.pureweb.io bucket
-                    //we want to go to ddx.platform.pureweb.io
-                    //If we're pulling this form ddx-[foo].pureweb.io bucket
-                    //we want to go to ddx-foo.platform.pureweb.io
-                    if (result){
-                        var hyphen = result[1].indexOf('-');
-                        if (hyphen >= 0){
-                            var env = result[1].substring((hyphen+1), result[1].length);
-                      
-                            host = name + '-' + env + '.platform.pureweb.io';
-                        } else {
-                            host = name + '.platform.pureweb.io';    
-                        }
-                    } else {
-                        host = location.hostname;
-                    }
-                }
-            } else {
-                host = targetCluster;
-            }                        
-    
+            var host = ddxclient.getPlatformHostname();
+                                       
             var qs = '';
+            var name = getParameterByName('name');
             if (location.search === ''){
                 qs = '?name=DDxCpp';
                 name = 'DDxCpp';
@@ -155,17 +122,53 @@ ddxclient.connect = function() {
         pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
     };
 
-    if (getParameterByName('targetCluster') !== '') {
-        connectToPlatform();
-    } else {
-        pureweb.getClusterAddress(function(clusterAddress) {
-            if (clusterAddress !== null) {
-                connectToPlatform();
+    var possiblePlatformURL = location.protocol + '//' + ddxclient.getPlatformHostname();
+    pureweb.isPlatformEndpoint(possiblePlatformURL, function(isPlatform) {
+        if (isPlatform) {
+            connectToPlatform();
+        } else {
+            connectToServer();
+        }        
+    });
+};
+
+ddxclient.getPlatformHostname = function(){
+    var host = null;
+    var targetCluster = getParameterByName('targetCluster');
+    var name = getParameterByName('name');
+
+    if (targetCluster === ''){
+        if (location.port === '2001' || location.port === '2002'){  
+            host = location.hostname; 
+        } else {
+            var re = /(.*)\.pureweb\.io/;                
+            result = re.exec(location.hostname);
+
+            if (name === ''){
+                name = 'DDxCpp';
+            }
+
+            //If we're pulling this from ddx.pureweb.io bucket
+            //we want to go to ddx.platform.pureweb.io
+            //If we're pulling this form ddx-[foo].pureweb.io bucket
+            //we want to go to ddx-foo.platform.pureweb.io
+            if (result){
+                var hyphen = result[1].indexOf('-');
+                if (hyphen >= 0){
+                    var env = result[1].substring((hyphen+1), result[1].length);
+              
+                    host = name + '-' + env + '.platform.pureweb.io';
+                } else {
+                    host = name + '.platform.pureweb.io';    
+                }
             } else {
-                connectToServer();
-            }        
-        });
+                host = location.hostname;
+            }
+        }
+    } else {
+        host = targetCluster;
     }
+    return host; 
 };
 
 ddxclient.disconnect = function() {
