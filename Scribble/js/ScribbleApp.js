@@ -67,43 +67,11 @@ function startScribble() {
             pureweb.joinPlatformSessionFromUri(location.href, "Scientific");   
         }
         else {
-            var host = '';
-            var targetCluster = getParameterByName('targetCluster'); 
-            var name = getParameterByName('name');
-    
-            if (targetCluster === ''){
-                if (location.port === '2001' || location.port === '2002'){  
-                    host = location.hostname; 
-                } else {                
-                    var re = /(.*)\.pureweb\.io/;                
-                    result = re.exec(location.hostname);
-       
-                    if (name === ''){
-                        name = 'ScribbleCpp';
-                    }
-    
-                    //If we're pulling this from scribble.pureweb.io bucket
-                    //we want to go to scribble.platform.pureweb.io
-                    //If we're pulling this form scribble-[foo].pureweb.io bucket
-                    //we want to go to scribble-foo.platform.pureweb.io
-                    if (result){
-                        var hyphen = result[1].indexOf('-');
-                        if (hyphen >= 0){
-                            var env = result[1].substring((hyphen+1), result[1].length);
-                         
-                            host = name + '-' + env + '.platform.pureweb.io';
-                        } else {
-                            host = name + '.platform.pureweb.io';    
-                        }
-                    } else {
-                        host = location.hostname;
-                    }            
-                }
-            } else {
-                host = targetCluster;
-            }                        
-        
+                                   
+            var host = getPlatformHostname();
+
             var qs = '';
+            var name = getParameterByName('name');
             if (location.search === ''){
                 qs = '?name=ScribbleCpp';
                 name = 'ScribbleCpp';
@@ -115,7 +83,7 @@ function startScribble() {
             console.log('Connecting to backend at:', uri);
      
             if ( name === "ScribbleCpp") {
-             // for test of identity connect
+                // for test of identity connect
                 client.setTestAuthCredentials('666822c4-c87d-474e-a548-18770a580ac0',
                     '47e6e5d96d8e83203ad52c47b6f43803ac520eb72776306c7eeb628337aacfa33bd09852580d36ccb21b26bbca59533d25267575b227f490f1e8ea01b6602f79');
             } 
@@ -138,19 +106,55 @@ function startScribble() {
         pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
     };
 
-    if (getParameterByName('targetCluster') !== '') {
-        connectToPlatform();
-    } else {
-        pureweb.getClusterAddress(function(clusterAddress) {
-            if (clusterAddress !== null) {
-                connectToPlatform();
-            } else {
-                connectToServer();
-            }        
-        });
-    }
+    var possiblePlatformURL = location.protocol + '//' + getPlatformHostname();
+    pureweb.isPlatformEndpoint(possiblePlatformURL, function(isPlatform) {
+        if (isPlatform) {
+            connectToPlatform();
+        } else {
+            connectToServer();
+        }        
+    });
 
     setupFPSCounter(scribbleView);
+}
+
+function getPlatformHostname(){
+    var host = null;
+    var targetCluster = getParameterByName('targetCluster'); 
+    var name = getParameterByName('name');
+
+    if (targetCluster === ''){
+        if (location.port === '2001' || location.port === '2002'){  
+            host = location.hostname; 
+        } else {                
+            var re = /(.*)\.pureweb\.io/;                
+            result = re.exec(location.hostname);
+
+            if (name === ''){
+                name = 'ScribbleCpp';
+            }
+
+            //If we're pulling this from scribble.pureweb.io bucket
+            //we want to go to scribble.platform.pureweb.io
+            //If we're pulling this form scribble-[foo].pureweb.io bucket
+            //we want to go to scribble-foo.platform.pureweb.io
+            if (result){
+                var hyphen = result[1].indexOf('-');
+                if (hyphen >= 0){
+                    var env = result[1].substring((hyphen+1), result[1].length);
+                 
+                    host = name + '-' + env + '.platform.pureweb.io';
+                } else {
+                    host = name + '.platform.pureweb.io';    
+                }
+            } else {
+                host = location.hostname;
+            }            
+        }
+    } else {
+        host = targetCluster;
+    } 
+    return host;
 }
 
 function getParameterByName(name) {
