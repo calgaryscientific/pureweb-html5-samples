@@ -1086,7 +1086,7 @@ ddxclient.onBlinkViewConnected = function(connected) {
         ddxclient.blinkCount--;
         pureweb.unlisten(ddxclient.pgView, pureweb.client.View.EventType.IS_VIEW_CONNECTED_CHANGED, ddxclient.onBlinkViewConnected);
         if (ddxclient.blinkCount > 0){
-            ddxclient.blinkPGView();
+            setTimeout(ddxclient.blinkPGView, 500);
         } else {
            ddxclient.createPGView();            
         }
