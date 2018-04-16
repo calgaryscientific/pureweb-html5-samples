@@ -1076,6 +1076,81 @@ ddxclient.AnnotatedView.prototype.showMousePos_ = function(x, y) {
 };
 
 /**
+ * When PG view is connected during the blink test
+ * this will either continue the test (based on the number)
+ * of blinks already performed, or will restore the origianl
+ * annotated PGView.
+ */
+ddxclient.onBlinkViewConnected = function(connected) {
+    if (connected) {
+        ddxclient.blinkCount--;
+        pureweb.unlisten(ddxclient.pgView, pureweb.client.View.EventType.IS_VIEW_CONNECTED_CHANGED, ddxclient.onBlinkViewConnected);
+        if (ddxclient.blinkCount > 0){
+            ddxclient.blinkPGView();
+        } else {
+           ddxclient.createPGView();            
+        }
+    }
+};
+
+/**
+ * Kicks of the PGView blink test.  PGView will be created and destoryed n times.
+ */
+ddxclient.onBlinkPGViewClicked = function(n){
+    ddxclient.blinkCount = n;
+    ddxclient.blinkPGView();
+};
+
+/**
+ * Destroys the PGView, and recreates it (as a non-annotated view)
+ * this is used for testing for memory leaks in the view creation / tear down
+ * process
+ */
+ddxclient.blinkPGView = function() {    
+    goog.events.removeAll(ddxclient.pgView);
+    if (ddxclient.pgView){
+        if (ddxclient.pgView.annotateView_){
+            pureweb.getFramework().getState().getStateManager().removeChildChangedHandler(ddxclient.pgView.pathPrefix_ + '/MouseEvent', ddxclient.pgView.annotateView_);
+            pureweb.getFramework().getState().getStateManager().removeChildChangedHandler(ddxclient.pgView.pathPrefix_ + '/KeyEvent', ddxclient.pgView.annotateView_);
+        }
+        if (ddxclient.pgView.dispose){
+            ddxclient.pgView.dispose();
+            ddxclient.pgView = null; 
+        }
+    }
+    ddxclient.pgView = new pureweb.client.View({id: 'pgview', 'viewName': 'PGView'});
+    pureweb.listen(ddxclient.pgView, pureweb.client.View.EventType.IS_VIEW_CONNECTED_CHANGED, ddxclient.onBlinkViewConnected);    
+};
+
+/**
+ * Creates an annotated PG View if one does not already exist
+ */
+ddxclient.createPGView = function() {
+    if ((goog.isDefAndNotNull(ddxclient.pgView)) && (goog.isDefAndNotNull(ddxclient.pgView.dispose))){
+        goog.events.removeAll(ddxclient.pgView);
+        ddxclient.pgView.dispose();
+        ddxclient.pgView = null;
+    }
+    ddxclient.pgView = new ddxclient.AnnotatedView({id: 'pgview', 'viewName': 'PGView'});
+    ddxclient.setupCounters(ddxclient.pgView);
+
+    var toolset = new pureweb.client.collaboration.AcetateToolset();
+    var client = pureweb.getClient();
+
+    var cursorPositionToolDelegate = new pureweb.client.collaboration.CursorPositionTool();
+    var polylineToolDelegate = new pureweb.client.collaboration.PolylineTool();
+
+    var cursorPositionTool = toolset.registerToolDelegate(cursorPositionToolDelegate);
+    var polylineTool = toolset.registerToolDelegate(polylineToolDelegate);
+
+    toolset.setDefaultTool(cursorPositionTool);
+    ddxclient.pgView.setAcetateToolset(toolset);
+
+    toolset.activateTool(cursorPositionTool);
+    toolset.activateTool(polylineTool);    
+};
+
+/**
  * Handle Share button clicks on the Collaboration tab.
  */
 ddxclient.onShareButtonClicked = function() {
