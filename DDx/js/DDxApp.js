@@ -1076,29 +1076,35 @@ ddxclient.AnnotatedView.prototype.showMousePos_ = function(x, y) {
 };
 
 /**
- * When PG view is connected during the blink test
- * this will either continue the test (based on the number)
- * of blinks already performed, or will restore the origianl
- * annotated PGView.
+ * When PG view is updated during the blink test
+ * this will either continue the test (based on the blinkPGView boolean flag)
+ * or will restore the origianl annotated PGView.
  */
-ddxclient.onBlinkViewConnected = function(connected) {
-    if (connected) {
-        ddxclient.blinkCount--;
-        pureweb.unlisten(ddxclient.pgView, pureweb.client.View.EventType.IS_VIEW_CONNECTED_CHANGED, ddxclient.onBlinkViewConnected);
-        if (ddxclient.blinkCount > 0){
-            setTimeout(ddxclient.blinkPGView, 500);
-        } else {
-           ddxclient.createPGView();            
-        }
-    }
+ddxclient.onBlinkViewUpdated = function() {
+    pureweb.unlisten(ddxclient.pgView, pureweb.client.View.EventType.VIEW_UPDATED, ddxclient.onBlinkViewUpdated);
+    if (!ddxclient.stopBlinkPGView){
+        // the timeout used here gives a little time needed for initial h.264 framees to render, otherwise
+        // the view may not blink at all
+        setTimeout(ddxclient.blinkPGView, 50);
+    } else {
+        goog.dom.setTextContent(document.getElementById('btnBlinkPGView'), 'Blink View');        
+        ddxclient.createPGView();            
+     }
 };
 
 /**
  * Kicks of the PGView blink test.  PGView will be created and destoryed n times.
  */
-ddxclient.onBlinkPGViewClicked = function(n){
-    ddxclient.blinkCount = n;
-    ddxclient.blinkPGView();
+ddxclient.stopBlinkPGView = true;
+
+ddxclient.onBlinkPGViewClicked = function(){
+    ddxclient.stopBlinkPGView = !ddxclient.stopBlinkPGView;
+    if (!ddxclient.stopBlinkPGView) {
+        goog.dom.setTextContent(document.getElementById('btnBlinkPGView'), 'Stop Blinking');
+        ddxclient.blinkPGView();
+    } else {
+        goog.dom.setTextContent(document.getElementById('btnBlinkPGView'), 'Blink View');
+    }
 };
 
 /**
@@ -1119,7 +1125,7 @@ ddxclient.blinkPGView = function() {
         }
     }
     ddxclient.pgView = new pureweb.client.View({id: 'pgview', 'viewName': 'PGView'});
-    pureweb.listen(ddxclient.pgView, pureweb.client.View.EventType.IS_VIEW_CONNECTED_CHANGED, ddxclient.onBlinkViewConnected);    
+    pureweb.listen(ddxclient.pgView, pureweb.client.View.EventType.VIEW_UPDATED, ddxclient.onBlinkViewUpdated);    
 };
 
 /**
