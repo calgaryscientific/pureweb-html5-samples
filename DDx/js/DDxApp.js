@@ -1530,6 +1530,24 @@ ddxclient.changeCineDeltaT = function(val){
     ddxclient.cineController.setFrameDeltaT(val);
 };
 
+ddxclient.onJoinServerShare = function() {
+    var doc =  goog.dom.getDocument();
+    var shareUrl = doc.getElementById('shareUri').value;
+    var sharePassword = doc.getElementById('sharePassword').value;
+
+    if(goog.string.isEmptySafe(sharePassword)) {
+        alert("You must provide a password in order to join an exising session");
+        return;
+    }
+
+    ddxclient.attachListeners(); // so the CONNECTED_CHANGED event is handled and views get created
+
+    try {
+       pureweb.joinServerSession(shareUrl,sharePassword);
+    } catch (ex) {
+        alert("An error occurred joining the server session: " + ex.getMessage());
+    }
+}
 
 ddxclient.locateSessionStorageTableRowIndex = function(key){
     var storageTable = document.getElementById('sessionstoragetable');
