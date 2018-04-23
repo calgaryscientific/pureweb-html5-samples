@@ -225,8 +225,8 @@
 
     <div id="collaboration_tab" style="width: 100%; height: 100%;">
         <div id="collaborationForm" style="padding: 8px;">
-            <div class="goog-inline-block label-column" style="text-align:center;">
-                <button id="btnShare" onClick="ddxclient.onShareButtonClicked();">Share</button>
+            <div class="goog-inline-block label-column" style="text-align:center">
+                <button id="btnShare" onClick="ddxclient.onShareButtonClicked();" style="float: left">Share</button>
             </div>
             <div class="goog-inline-block field-column">
                 <input id='txtShareUrl' type="text" style="width: 100%"/>
@@ -236,13 +236,13 @@
             <div>
                 <span><b>User Information</b></span>
             </div>
-            <div class="goog-inline-block label-column">
+            <div class="goog-inline-block label-column" style="text-align: left">
                 <span>name:</span>
             </div>
             <div class="goog-inline-block field-column">
                 <input id="txtName" type="text" style="width: 100%"/>
             </div>
-            <div class="goog-inline-block label-column">
+            <div class="goog-inline-block label-column" style="text-align: left">
                 <span>email:</span>
             </div>
             <div class="goog-inline-block field-column">
@@ -257,7 +257,24 @@
                 </div>
             </div>
         </div>
-
+        <div>
+          <div class="goog-inline-block label-column" style="text-align: left">
+            <span>Share Url:</span>
+          </div>
+          <div class="goog-inline-block field-column">
+            <input id="shareUri" type="text" style="width: 100%"/>
+          </div>
+          <div class="goog-inline-block label-column" style="text-align: left">
+            <span>Share Password:</span>
+          </div>
+          <div class="goog-inline-block field-column">
+            <input id="sharePassword" type="password" style="width: 100%"/>
+          
+            <div>
+              <button id="btnJoinSession" style="width: 140px;" onClick="ddxclient.onJoinServerShare();">Join Server Session</button>
+            </div>
+          </div>
+        </div>
         <div id="participantsPanel" style="padding: 8px;">
             <span><b>Participants</b></span>
             <div id="lstParticipants" style="width: 100%; height: 320px; border: 1px solid gray;"></div>
