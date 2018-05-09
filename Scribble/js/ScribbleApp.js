@@ -360,7 +360,7 @@ function generateShareUrl(){
                 //See note re: prompt boxes at the top of the file                
 				if (window.prompt("Here is your collaboration URL:",getUrl)){
                     // next time Share button is clicked it invalidates that previous share URL
-                    goog.dom.setTextContent(document.getElementById('btnShare'), 'Unshare');
+                    document.getElementById('btnShare').innerText = 'Unshare';
                     //Reattach the listeners for disconnection events
                     setDisconnectOnUnload(true);                    
                 }
@@ -378,7 +378,7 @@ function generateShareUrl(){
                 alert('An error occurred invalidating the share URL: ' + exception);
             } else {
                 // next time Share button is clicked it creates a new share URL
-                goog.dom.setTextContent(document.getElementById('btnShare'), 'Share');
+                document.getElementById('btnShare').innerText = 'Share';
                
                 shareUrl = null;
             }
