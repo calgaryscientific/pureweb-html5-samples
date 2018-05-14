@@ -103,7 +103,7 @@ function startScribble() {
     };
 
     var connectToServer = function() {
-        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
+        pureweb.connectToServer(location.href, null, true, {username: "admin", password: "admin"});
     };
 
     var possiblePlatformURL = location.protocol + '//' + getPlatformHostname();
