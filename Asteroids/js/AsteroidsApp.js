@@ -113,7 +113,7 @@ function startAsteroids() {
     };
 
     var connectToServer = function() {
-        pureweb.connectToServer(location.href, {username: "admin", password: "admin"});        
+        pureweb.connectToServer(location.href);        
     };
 
     var possiblePlatformURL = location.protocol + '//' + getPlatformHostname();
