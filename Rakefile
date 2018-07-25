@@ -2,7 +2,6 @@ require_relative("../../Rakefile-init")
 
 projects = {
     "DDx" => "./DDx",    
-    "Asteroids" => "./Asteroids", 
     "Scribble" => "./Scribble"
 }
 
