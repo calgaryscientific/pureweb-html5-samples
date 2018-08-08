@@ -97,6 +97,11 @@ function startScribble() {
                 client.setTestAuthCredentials('6288f8d1-577d-437d-8ebc-efd7cd6826df',
                     '10c12d8fc81001b1e8c772b4311f492f15626e0323a70e05d1c939de093feb57e620fcbc4ebb280fcb36dc5c1137ae2ce3dd91d248213cfc6ae4224391b627cc');
             }
+
+             if ( name === "ScribbleQt") {
+                client.setTestAuthCredentials('00fac419-9763-414d-9ce1-2548be8e26ec',
+                    '3f08ae59a8b4b7b95fa8ef62ca7bc0f39b970e2c53ac8468aae9b5ea85a6fadd33e8d4861e5f6959856c4d5922baebcf448a9d9c39cbd48033b236cbeeb37550');
+            }
     
             pureweb.getClient().connectToPlatform(uri);
         }
