@@ -172,8 +172,19 @@ ddxclient.getPlatformHostname = function(){
 };
 
 ddxclient.disconnect = function() {
-    pureweb.disconnect()
-    location.reload();
+    pureweb.disconnect();
+    // just reload the page if connected to the platform otherwise if 
+    // it is a standalone server redirec to the view URL so a new instance
+    // of DDx is not immediately restarted (otherwise can get a 503 error if
+    // server is at maximum load and the previuse DDx instance has not had
+    // sufficient time to shutdown - see PWEB-7413)
+    pureweb.isPlatformEndpoint(location.href, function(isPlatform) {
+        if (isPlatform) {
+            location.reload();
+        } else {
+            location.assign(location.origin + "/pureweb/view?name=DDx&client=html5");
+        }        
+    });
 };
 
 ddxclient.addWindow = function() {
