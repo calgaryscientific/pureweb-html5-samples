@@ -1,0 +1,1 @@
+Copyright notices, licenses and source code (where applicable) for third party libraries that are distributed with the PureWeb SDK can be found at https://docs.pureweb.io/attributions.html.
