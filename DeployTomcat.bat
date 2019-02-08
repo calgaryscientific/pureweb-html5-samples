@@ -35,7 +35,7 @@ xcopy /s /y %PUREWEB_LIBS%\HTML5 %PUREWEB_HOME%\tomcat-server\webapp\lib\pureweb
 powershell -Command "(gc index.html) -replace '%%PUREWEB_BASE_PATH%%', '' | Out-File %PUREWEB_HOME%\tomcat-server\webapp\ScribbleApp.html"
 cd ..
 
-rem Deploy the Scribble HTML5 sample to Tomcat
+rem Deploy the DDx HTML5 sample to Tomcat
 echo Deploying DDx to Tomcat
 cd DDx
 call bower install
