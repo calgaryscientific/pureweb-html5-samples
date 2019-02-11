@@ -192,7 +192,7 @@ ddxclient.disconnect = function() {
         if (isPlatform) {
             location.reload();
         } else {
-            location.assign(location.origin + "/pureweb/view?name=DDx&client=html5");
+            location.assign(location.origin + "/pureweb/view" + location.search);
         }        
     });
 };
