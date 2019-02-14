@@ -1,44 +1,19 @@
-pureweb-html5-samples
+PureWeb sample HTML5 clients
 =====================
 
-The following notes outline what I did to get the HTML5 samples deployed to Tomcat from the command line and
-running in Tomcat without the PureWeb Gravity environment. The instructions below assume the following that node and bower are both installed (the batch file DeployTomcat.bat will warn with instructions on what to do if not).
+This repository contains sample HTML5 clients created using the PureWeb software development kit (SDK). The PureWeb SDK combines remote visualization, interactive 3D, and synchronous distributed collaboration technologies, bringing the power of highly sophisticated graphics applications to the mobile world. More information on the SDK is available on our [developer site](https://www.pureweb.io/).
 
-1. Downloaded Tomcat server zip artifact from Bamboo and unzip to c:\temp\PureWeb\tomcat-server.
+The SDK provides APIs for developers to create their own applications, and the samples in this repository are intended both as a learning tool and a quick start point. They are simple yet functional applications that illustrate all the key fundamentals of the APIs. There are two samples available:
+* Scribble: a simple canvas which allows users to draw, change pen color, and erase drawings; the collaboration feature enables multiple users to interact simultaneously with the canvas. Scribble is our main sample application, and the one that we recommend for developers who are new to the SDK.
+* DDx: a web interface used internally by the PureWeb development team to exercise and test the features of the APIs. You may find this sample code useful as additional examples of the API’s core methods. Note, however, that we do not provide specific instructions on how to build and deploy the DDx client.
 
-2. Download the HTML5 SDK zip artifact from Bamboo and unzip to c:\temp\PureWeb\sdk\Libs\HTML5.
+There are three main components to solutions built using the PureWeb SDK, and you must install all three in order to have a working application:
+* a client interface that resides on end user devices (such as the sample clients in this repository)
+* a service application that handles all the heavy computation, data processing and image rendering, such as the ones in the repositories for the [C++ sample services](https://github.com/calgaryscientific/pureweb-cpp-samples) and [.Net sample services](https://github.com/calgaryscientific/pureweb-dotnet-samples); service applications can reside on a remote server.
+* the PureWeb server, a middle-tier layer based on Tomcat technology, for which you must obtain a license. You can obtain a free trial license by contacting our support team at support@pureweb.com. 
 
-3. Build and deploy either the C++ or .NET samples to Tomcat as described in the README files for those samples.
+Because of the interdependency of these components, they must be installed together, in a particular order that allows the creation of the required directory structure. For complete instructions, refer to the [PureWeb documentation](http://docs.pureweb.io/sdk5.0/content/setup/installation.html).
 
-4. Clone HTML5 samples repo to c:\temp\PureWeb\samples\HTML5
-
-5. The expanded directory structure should mimic the PureWeb Gravity setup:
-    
-   C:\temp\PureWeb\samples\HTML5
-   C:\temp\PureWeb\samples\HTML5\Scribble
-   C:\temp\PureWeb\samples\HTML5\DDx
-   C:\temp\PureWeb\sdk\Libs\HTML5
-   C:\temp\PureWeb\tomcat-server
-   C:\temp\PureWeb\tomcat-server\conf
-   C:\temp\PureWeb\tomcat-server\docs
-   C:\temp\PureWeb\tomcat-server\etc
-   C:\temp\PureWeb\tomcat-server\tomcat
-   C:\temp\PureWeb\tomcat-server\webapp
-
-6. Open a command prompt in c:\temp\PureWeb and set environment variables:
-   
-   set PUREWEB_LIBS=c:\temp\PureWeb\sdk\Libs
-   set PUREWEB_HOME=c:\temp\PureWeb
-   
-7. To deploy the HTML5 samples to Tomcat:
-   
-   cd c:\temp\PureWeb\samples\HTML5
-   DeployTomcat
-
-7. To run Tomcat
-   a. a PureWeb license file is required and in must be placed in c:\temp\PureWeb\tomcat-server\conf
-   b. cd c:\temp\PureWeb\tomcat-server\tomcat\bin
-   c. catalina run
-   d. Go to the apps page and run either DDx or Scribble.
+The samples are provided under the Apache 2 license; see the LICENSE file at the root of this repository for the full text.
 
 
