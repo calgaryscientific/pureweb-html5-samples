@@ -9,12 +9,11 @@ The SDK provides APIs for developers to create their own applications, and the s
 
 There are three main components to solutions built using the PureWeb SDK, and you must install all three in order to have a working application:
 * a client interface that resides on end user devices (such as the sample clients in this repository)
-* a service application that handles all the heavy computation, data processing and image rendering (such as the ones in the repositories for the [C++ sample services](https://github.com/calgaryscientific/pureweb-cpp-samples) and [.Net sample services](https://github.com/calgaryscientific/pureweb-dotnet-samples); service applications can reside on a remote server
+* a service application that handles all the heavy computation, data processing and image rendering, such as the ones in the repositories for the [C++ sample services](https://github.com/calgaryscientific/pureweb-cpp-samples) and [.Net sample services](https://github.com/calgaryscientific/pureweb-dotnet-samples); service applications can reside on a remote server.
 * the PureWeb server, a middle-tier layer based on Tomcat technology, for which you must obtain a license. You can obtain a free trial license by contacting our support team at support@pureweb.com. 
 
 Because of the interdependency of these components, they must be installed together, in a particular order that allows the creation of the required directory structure. For complete instructions, refer to the [PureWeb documentation](http://docs.pureweb.io/sdk5.0/content/setup/installation.html).
 
-These samples in this repository are provided under the Apache 2 license; see the LICENSE file for the full text.
-
+The samples are provided under the Apache 2 license; see the LICENSE file at the root of this repository for the full text.
 
 
