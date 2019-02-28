@@ -173,6 +173,9 @@ ddxclient.getPlatformHostname = function(){
                 }
             } else {
                 host = location.hostname;
+                if (location.port !== undefined && location.port !== null) {
+                    host += ':' + location.port;
+                }                
             }
         }
     } else {
