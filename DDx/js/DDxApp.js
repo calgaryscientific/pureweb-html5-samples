@@ -186,6 +186,13 @@ ddxclient.getPlatformHostname = function(){
 
 ddxclient.disconnect = function() {
     pureweb.disconnect();
+    
+    // check for dev platform in which case, just reload
+    if (location.port === '2001') {
+        location.reload();
+        return;
+    }
+
     // just reload the page if connected to the platform otherwise if 
     // it is a standalone server redirec to the view URL so a new instance
     // of DDx is not immediately restarted (otherwise can get a 503 error if
